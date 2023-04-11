@@ -4,6 +4,8 @@ import { View, Text } from "react-native";
 
 /* components */
 import { HomePage } from "./HomePage";
+import { AddPage } from "./AddPage";
+import { SearchPage } from "./SearchPage";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +29,7 @@ export function BottomNav() {
       />
       <Tab.Screen
         name="Search"
-        component={Search}
+        component={SearchPage}
         options={{
           tabBarLabel: "Search",
           tabBarIcon: ({ color, size }) => (
@@ -38,7 +40,7 @@ export function BottomNav() {
       />
       <Tab.Screen
         name="Add"
-        component={Add}
+        component={AddPage}
         options={{
           tabBarLabel: "Add",
           tabBarIcon: ({ color, size }) => (

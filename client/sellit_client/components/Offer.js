@@ -6,6 +6,7 @@ export function Offer() {
     <View
       style={{
         /* positioning */
+
         margin: 5,
         padding: 15,
         /* box shadow */
