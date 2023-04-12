@@ -55,6 +55,7 @@ export function AddPage() {
         <TextInput
           label="Price"
           inputMode="numeric"
+          pattern="[0-9]*"
           keyboardType={"numeric"}
           mode="outlined"
           value={price}
