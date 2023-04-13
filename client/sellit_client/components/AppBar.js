@@ -2,15 +2,33 @@ import * as React from "react";
 import { Appbar, Drawer } from "react-native-paper";
 import { View, Text } from "react-native";
 
-export function AppBar(props) {
+import { useSelector, useDispatch } from "react-redux";
+import { drawerOpen } from "../reducers/ComponentsReducer";
+import { useNavigation } from "@react-navigation/native";
+
+export function AppBar() {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const drawer = useSelector((state) => state.componentsStore.drawer);
+
   function menuClick() {
-    props.visible = !props.visible;
-    console.log(props.visible);
+    console.log("drawer", drawer);
+    dispatch(drawerOpen());
+  }
+
+  function chatClick() {
+    console.log("chat");
+    //navigate to add page
+    navigation.navigate("ChatPage");
   }
 
   return (
     <View>
-      <Appbar.Header>
+      <Appbar.Header
+        style={{
+          backgroundColor: "white",
+        }}
+      >
         {/* <Appbar.BackAction onPress={() => {}} /> */}
         <View
           style={{
@@ -21,7 +39,7 @@ export function AppBar(props) {
           }}
         >
           <Appbar.Action icon="menu" onPress={menuClick} />
-          {/* <Appbar.Content title="Title" style={{}} /> */}
+
           <Text
             style={{
               fontSize: 20,
@@ -30,7 +48,7 @@ export function AppBar(props) {
           >
             Title
           </Text>
-          <Appbar.Action icon="chat-outline" onPress={() => {}} />
+          <Appbar.Action icon="chat-outline" onPress={chatClick} />
         </View>
       </Appbar.Header>
     </View>

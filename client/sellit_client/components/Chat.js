@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native";
 import { Card } from "react-native-paper";
 
-export function Offer() {
+export function Chat() {
   return (
     <View
       style={{
@@ -26,6 +26,52 @@ export function Offer() {
     >
       <View
         style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 15,
+          }}
+        >
+          Title
+        </Text>
+      </View>
+
+      <View
+        style={{
+          position: "absolute",
+          right: 10,
+          top: -5,
+          borderWidth: 3,
+          padding: 3,
+          borderRadius: 10,
+          borderColor: "red",
+          backgroundColor: "white",
+
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 7,
+          },
+          shadowOpacity: 0.43,
+          shadowRadius: 9.51,
+          elevation: 5,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+          }}
+        >
+          150$
+        </Text>
+      </View>
+
+      <View
+        style={{
           flexDirection: "row",
           gap: 15,
           marginBottom: 10,
@@ -47,27 +93,9 @@ export function Offer() {
           >
             Username
           </Text>
-          <Text>Location</Text>
+          <Text>Last message</Text>
         </View>
       </View>
-      <Card style={{ marginBottom: 15 }}>
-        <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
-      </Card>
-      <Text
-        style={{
-          fontWeight: "bold",
-          fontSize: 20,
-        }}
-      >
-        Title
-      </Text>
-      <Text
-        style={{
-          fontWeight: "bold",
-        }}
-      >
-        200$
-      </Text>
     </View>
   );
 }
