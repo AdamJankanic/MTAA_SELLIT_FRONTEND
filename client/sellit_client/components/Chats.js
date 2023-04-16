@@ -39,6 +39,8 @@ export function Chats() {
           justifyContent: "center",
           alignItems: "center",
           gap: 10,
+          // marginBottom: 0,
+          backgroundColor: "white",
         }}
       >
         <Pressable style={styles.button}>
@@ -49,7 +51,13 @@ export function Chats() {
         </Pressable>
       </View>
 
-      <ScrollView>
+      <ScrollView
+        style={{
+          // backgroundColor: "red",
+          height: "85%",
+        }}
+      >
+        <Chat />
         <Chat />
         <Chat />
         <Chat />

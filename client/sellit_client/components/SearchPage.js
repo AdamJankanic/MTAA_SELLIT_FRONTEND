@@ -1,6 +1,6 @@
 import * as React from "react";
-import { View, ScrollView } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { View, ScrollView, Text } from "react-native";
+import { IconButton, Searchbar } from "react-native-paper";
 import { Offer } from "./Offer";
 
 export function SearchPage() {
@@ -20,6 +20,35 @@ export function SearchPage() {
         }}
       />
 
+      <View
+        style={{
+          flexDirection: "row",
+          // alignSelf: "center",
+          // alignContent: "space-between",
+          justifyContent: "space-around",
+          // gap: 10,
+          display: "none",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 15,
+            fontWeight: "bold",
+            alignSelf: "center",
+            justifyContent: "flex-start",
+          }}
+        >
+          Search string || Category name
+        </Text>
+
+        <IconButton
+          icon="filter"
+          style={{
+            justifyContent: "flex-end",
+            // backgroundColor: "red",
+          }}
+        ></IconButton>
+      </View>
       <ScrollView>
         <Offer />
         <Offer />

@@ -46,7 +46,7 @@ export function AppBar() {
               fontWeight: "bold",
             }}
           >
-            Title
+            Sell It
           </Text>
           <Appbar.Action icon="chat-outline" onPress={chatClick} />
         </View>

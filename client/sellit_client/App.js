@@ -10,14 +10,16 @@ import rootReducer from "./reducers/index.js";
 
 import { AppBar } from "./components/AppBar";
 import { BottomNav } from "./components/BottomNav";
-import { NavigationContainer } from "@react-navigation/native";
 import { LeftDrawer } from "./components/Drawer";
 import { HomePage } from "./components/HomePage.js";
 import { AddPage } from "./components/AddPage.js";
 import { Chats } from "./components/Chats.js";
 import { SearchPage } from "./components/SearchPage.js";
+import { ChatDetail } from "./components/ChatDetail.js";
 
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { OfferDetail } from "./components/OfferDetail.js";
 
 const Stack = createStackNavigator();
 
@@ -56,6 +58,16 @@ export default function App() {
             <Stack.Screen
               name="ChatPage"
               component={Chats}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ChatDetailPage"
+              component={ChatDetail}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="OfferDetailPage"
+              component={OfferDetail}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

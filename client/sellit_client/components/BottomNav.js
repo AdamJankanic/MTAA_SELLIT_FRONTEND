@@ -82,12 +82,12 @@ function Profile() {
 }
 
 import * as React from "react";
-import { BottomNavigation, IconButton, Text } from "react-native-paper";
+import { BottomNavigation, Icon, IconButton, Text } from "react-native-paper";
 // /* components */
 import { HomePage } from "./HomePage";
 import { AddPage } from "./AddPage";
 import { SearchPage } from "./SearchPage";
-import { Button, View } from "react-native";
+import { Button, View, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export function BottomNav() {
@@ -122,45 +122,53 @@ export function BottomNav() {
         backgroundColor: "white",
       }}
     >
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <IconButton icon="home" onPress={goHomePage}></IconButton>
-        <Text style={{ marginTop: -15 }}>Home</Text>
-      </View>
+      <TouchableOpacity onPress={goHomePage}>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton icon="home"></IconButton>
+          <Text style={{ marginTop: -15 }}>Home</Text>
+        </View>
+      </TouchableOpacity>
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <IconButton icon="magnify" onPress={goSearchPage}></IconButton>
-        <Text style={{ marginTop: -15 }}>Search</Text>
-      </View>
+      <TouchableOpacity onPress={goSearchPage}>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton icon="magnify"></IconButton>
+          <Text style={{ marginTop: -15 }}>Search</Text>
+        </View>
+      </TouchableOpacity>
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <IconButton icon="plus-thick" onPress={goAddPage}></IconButton>
-        <Text style={{ marginTop: -15 }}>Add</Text>
-      </View>
+      <TouchableOpacity onPress={goAddPage}>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton icon="plus-thick"></IconButton>
+          <Text style={{ marginTop: -15 }}>Add</Text>
+        </View>
+      </TouchableOpacity>
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <IconButton icon="account" onPress={goProfilePage}></IconButton>
-        <Text style={{ marginTop: -15 }}>Profile</Text>
-      </View>
+      <TouchableOpacity onPress={goProfilePage}>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton icon="account"></IconButton>
+          <Text style={{ marginTop: -15 }}>Profile</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
