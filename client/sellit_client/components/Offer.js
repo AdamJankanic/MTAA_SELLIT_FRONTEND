@@ -2,13 +2,21 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Card } from "react-native-paper";
 
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveOffer } from "../reducers/OfferReducer";
 
-export function Offer() {
+export function Offer(props) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const activeOfferS = useSelector((state) => state.offerStore.activeOffer);
+  console.log("activeOfferSssssssssssssssssssssss", activeOfferS);
 
   function handleOfferClick() {
-    console.log("offer");
-
+    //set active offer
+    dispatch(setActiveOffer(props.offer.id));
+    console.log("activeOffer", props.offer.id);
+    console.log("changed");
     navigation.navigate("OfferDetailPage");
   }
 
@@ -44,7 +52,8 @@ export function Offer() {
         >
           <Image
             style={{ width: 50, height: 50, borderRadius: 50 }}
-            source={{ uri: "https://picsum.photos/200" }}
+            // source={{ uri: "https://picsum.photos/200" }}
+            source={{ uri: props.offer.userImage }}
           />
           <View
             style={{
@@ -56,13 +65,18 @@ export function Offer() {
                 fontWeight: "bold",
               }}
             >
-              Username
+              {props.offer.nickname}
             </Text>
-            <Text>Location</Text>
+            <Text>{props.offer.location}</Text>
           </View>
         </View>
         <Card style={{ marginBottom: 15 }}>
-          <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+          <Card.Cover
+            source={{
+              // uri: "https://picsum.photos/700"
+              uri: props.offer.image,
+            }}
+          />
         </Card>
         <Text
           style={{
@@ -70,14 +84,14 @@ export function Offer() {
             fontSize: 20,
           }}
         >
-          Title
+          {props.offer.title}
         </Text>
         <Text
           style={{
             fontWeight: "bold",
           }}
         >
-          200$
+          {props.offer.price}$
         </Text>
       </View>
     </TouchableOpacity>

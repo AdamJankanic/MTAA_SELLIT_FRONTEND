@@ -3,13 +3,28 @@ import { View, ScrollView, Text } from "react-native";
 import { IconButton, Searchbar } from "react-native-paper";
 import { Offer } from "./Offer";
 
+import { useSelector } from "react-redux";
+
 export function SearchPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
 
+  let allOffers = useSelector((state) => state.offerStore.offers);
+
   const onChangeSearch = (query) => setSearchQuery(query);
 
+  allOffers = allOffers.filter((offer) => {
+    return (
+      offer.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      offer.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
   return (
-    <View>
+    <View
+      style={{
+        backgroundColor: "white",
+      }}
+    >
       <Searchbar
         placeholder="Search"
         onChangeText={onChangeSearch}
@@ -49,10 +64,15 @@ export function SearchPage() {
           }}
         ></IconButton>
       </View>
-      <ScrollView>
-        <Offer />
-        <Offer />
-        <Offer />
+      <ScrollView
+        style={{
+          height: "90%",
+          backgroundColor: "white",
+        }}
+      >
+        {allOffers.map((offer, index) => (
+          <Offer key={index} offer={offer} />
+        ))}
       </ScrollView>
     </View>
   );

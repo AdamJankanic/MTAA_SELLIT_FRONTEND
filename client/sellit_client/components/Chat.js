@@ -2,12 +2,19 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Card } from "react-native-paper";
 
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setActiveChannel } from "../reducers/MessagesReducer";
 
-export function Chat() {
+export function Chat(props) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   function handleChatClick() {
     console.log("chat");
+
+    //set active channel
+    dispatch(setActiveChannel(props.channelProp.id));
+
     //navigate to add page
     navigation.navigate("ChatDetailPage");
   }
@@ -47,7 +54,7 @@ export function Chat() {
               fontSize: 15,
             }}
           >
-            Title
+            {props.channelProp.title}
           </Text>
         </View>
 
@@ -77,7 +84,7 @@ export function Chat() {
               fontWeight: "bold",
             }}
           >
-            150$
+            {props.channelProp.price}
           </Text>
         </View>
 
@@ -102,9 +109,9 @@ export function Chat() {
                 fontWeight: "bold",
               }}
             >
-              Username
+              {props.channelProp.nickname}
             </Text>
-            <Text>Last message</Text>
+            <Text>{props.channelProp.message}</Text>
           </View>
         </View>
       </View>

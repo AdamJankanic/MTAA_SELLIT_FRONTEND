@@ -2,8 +2,24 @@ import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import { TextInput, IconButton } from "react-native-paper";
 
+import { useDispatch, useSelector } from "react-redux";
+
 export function ChatDetail() {
   const [message, setMessage] = React.useState("");
+
+  const dispatch = useDispatch();
+
+  const channels = useSelector((state) => state.messagesStore.channels);
+
+  const activeChannel = useSelector(
+    (state) => state.messagesStore.activeChannel
+  );
+
+  const messages = useSelector((state) => state.messagesStore.messages).filter(
+    (message) => {
+      return message.channelId === activeChannel;
+    }
+  );
 
   function handleSend() {
     console.log("Message sent");
@@ -24,11 +40,26 @@ export function ChatDetail() {
           fontWeight: "bold",
         }}
       >
-        Title
+        {
+          channels.find((channel) => {
+            return channel.id === activeChannel;
+          }).title
+        }
       </Text>
 
       <ScrollView>
-        <View style={styles.received}>
+        {messages.map((message, index) => {
+          return (
+            <View
+              key={index}
+              style={message.userId === 1 ? styles.sended : styles.received}
+            >
+              <Text ked={index}>{message.message}</Text>
+            </View>
+          );
+        })}
+
+        {/* <View style={styles.received}>
           <Text>
             Ahoj ahoj, chcel by som od teba kupit tieto paradne hodinky. Vieme
             sa dohodnut na 20e a jednom pivku?
@@ -79,7 +110,7 @@ export function ChatDetail() {
             Ahoj, v ziadnom pripade. Tieto hodinky maju ovela vyssiu hodnotu,
             ako si myslis. Minimalne 30e a niekolko piv.
           </Text>
-        </View>
+        </View> */}
       </ScrollView>
 
       <View

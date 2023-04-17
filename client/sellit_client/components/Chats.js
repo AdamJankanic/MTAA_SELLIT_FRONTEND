@@ -12,10 +12,42 @@ import { Searchbar } from "react-native-paper";
 
 import { Chat } from "./Chat";
 
-export function Chats() {
-  const [searchQuery, setSearchQuery] = React.useState("");
+import { useDispatch, useSelector } from "react-redux";
+import { addChannel } from "../reducers/MessagesReducer";
 
+export function Chats() {
+  const dispatch = useDispatch();
+
+  let channels = useSelector((state) => state.messagesStore.channels);
+  const messages = useSelector((state) => state.messagesStore.messages);
+  let [displayChannels, setDisplayChannels] = React.useState(channels);
+
+  const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
+
+  // displayChannels = channels.filter((channel) => {
+  //   return channel.title.toLowerCase().includes(searchQuery.toLowerCase());
+  // });
+
+  displayChannels = displayChannels.filter((channel) => {
+    return channel.title.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  function handleBuy() {
+    setDisplayChannels(
+      channels.filter((channel) => {
+        return channel.myOffer === false;
+      })
+    );
+  }
+
+  function handleSell() {
+    setDisplayChannels(
+      channels.filter((channel) => {
+        return channel.myOffer === true;
+      })
+    );
+  }
 
   return (
     <View
@@ -43,10 +75,10 @@ export function Chats() {
           backgroundColor: "white",
         }}
       >
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleBuy}>
           <Text style={styles.text}>Buy</Text>
         </Pressable>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleSell}>
           <Text style={styles.text}>Sell</Text>
         </Pressable>
       </View>
@@ -57,15 +89,9 @@ export function Chats() {
           height: "85%",
         }}
       >
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
+        {displayChannels.map((channelKey, index) => {
+          return <Chat key={index} channelProp={channelKey} />;
+        })}
       </ScrollView>
     </View>
   );
