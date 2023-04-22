@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-messagesTest = [
+const messagesTest = [
   {
     id: 1,
     channelId: 1,
@@ -84,7 +84,7 @@ messagesTest = [
   },
 ];
 
-channelsTest = [
+const channelsTest = [
   {
     id: 1,
     title: "Topanky",
