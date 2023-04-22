@@ -16,12 +16,6 @@
       "supportsTablet": true
     },
     "android": {
-      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"],
-      "config": {
-        "manifestExtra": {
-          "android:usesCleartextTraffic": true
-        }
-      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
