@@ -20,6 +20,7 @@ import { ChatDetail } from "./components/ChatDetail.js";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { OfferDetail } from "./components/OfferDetail.js";
+import { Dummy } from "./components/Dummy.js";
 
 const Stack = createStackNavigator();
 

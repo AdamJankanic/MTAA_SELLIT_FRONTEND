@@ -1,29 +1,85 @@
 import * as React from "react";
 
-import { View, Text, Image, ScrollView } from "react-native";
-import { TextInput } from "react-native-paper";
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import { Button, TextInput } from "react-native-paper";
 
 import DropDown from "react-native-paper-dropdown";
 
 import { ChooseImage } from "./ImagePicker";
 
+import axiosConfig from "../axiosConfig";
+
+import { UploadImage } from "./UploadImage";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setNewOffer,
+  // postNewOffer
+} from "../reducers/OfferReducer";
+
 export function AddPage() {
+  const dispatch = useDispatch();
   const [title, setTitle] = React.useState("");
-  const [location, setLocation] = React.useState("");
+
   const [price, setPrice] = React.useState("");
   const [description, setDescription] = React.useState("");
 
   const [category, setCategory] = React.useState(null);
   const [categoryVisible, setCategoryVisible] = React.useState(false);
 
+  const [city, setCity] = React.useState(null);
+  const [cityVisible, setCityVisible] = React.useState(false);
+
   const categories = [
-    { label: "Electronics", value: "electronics" },
-    { label: "Fashion", value: "fashion" },
-    { label: "Home", value: "home" },
-    { label: "Books", value: "books" },
-    { label: "Sports", value: "sports" },
-    { label: "Other", value: "other" },
+    { label: "Furniture", value: "18b8cf7e-397a-425e-88ec-e9a8cea4ed33" },
+    { label: "Electro", value: "61218e58-8c7a-4973-bda7-c7cc50dfdffc" },
   ];
+
+  const cities = [
+    {
+      label: "Bratislava 81101",
+      value: "915b4e19-5dc6-4cf3-9805-ab1be772c00e",
+    },
+    {
+      label: "Nitra 94901",
+      value: "01f633e4-b9aa-4c2f-a702-49d35e50fdeb",
+    },
+  ];
+
+  const imageBase64 = useSelector((state) => state.componentsStore.image);
+
+  async function handleSubmit() {
+    // dispatch(
+    //   setNewOffer({
+    //     title: title,
+    //     description: description,
+    //     price: price,
+    //     city_id: city,
+    //     category_id: category,
+    //     images: [{ image: imageBase64 }],
+    //     // image: imageBase64,
+    //   })
+    // );
+
+    try {
+      const response = await axiosConfig.post("/offers", {
+        title: title,
+        description: description,
+        price: price,
+        city_id: city,
+        category_id: category,
+        images: [{ image: imageBase64 }],
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+
+      // navigation.navigate("Home");
+    }
+  }
+
+  // console.log(useSelector((state) => state.offerStore.newOffer.images));
 
   return (
     <View>
@@ -38,7 +94,9 @@ export function AddPage() {
           source={{ uri: "https://picsum.photos/700" }}
         /> */}
 
-        <ChooseImage />
+        {/* <ChooseImage /> */}
+
+        <UploadImage />
 
         <TextInput
           label="Title"
@@ -46,12 +104,17 @@ export function AddPage() {
           value={title}
           onChangeText={(text) => setTitle(text)}
         />
-        <TextInput
-          label="Location"
-          mode="outlined"
-          value={location}
-          onChangeText={(location) => setLocation(location)}
+        <DropDown
+          label={"Category"}
+          mode={"outlined"}
+          value={city}
+          setValue={setCity}
+          list={cities}
+          visible={cityVisible}
+          showDropDown={() => setCityVisible(true)}
+          onDismiss={() => setCityVisible(false)}
         />
+
         <TextInput
           label="Price"
           inputMode="numeric"
@@ -79,6 +142,10 @@ export function AddPage() {
           onChangeText={(description) => setDescription(description)}
           multiline={true}
         />
+
+        <Pressable onPress={handleSubmit}>
+          <Text>Add</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );

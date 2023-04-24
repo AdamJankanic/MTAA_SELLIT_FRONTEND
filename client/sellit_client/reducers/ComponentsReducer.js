@@ -4,6 +4,8 @@ const componentsSlice = createSlice({
   name: "componentsState",
   initialState: {
     drawer: false,
+    activeScreen: "HomePage",
+    image: null,
   },
   reducers: {
     drawerOpen: (state, action) => {
@@ -13,8 +15,26 @@ const componentsSlice = createSlice({
     drawerClose: (state, action) => {
       state.drawer = false;
     },
+
+    setActiveScreen: (state, action) => {
+      state.activeScreen = action.payload;
+    },
+
+    setImage: (state, action) => {
+      state.image = action.payload;
+    },
+
+    setImageNull: (state, action) => {
+      state.image = null;
+    },
   },
 });
 
-export const { drawerOpen, drawerClose } = componentsSlice.actions;
+export const {
+  drawerOpen,
+  drawerClose,
+  setActiveScreen,
+  setImage,
+  setImageNull,
+} = componentsSlice.actions;
 export default componentsSlice.reducer;

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axiosConfig from "../axiosConfig";
 
 const offerTest = [
   {
@@ -55,15 +56,37 @@ const offerTest = [
   },
 ];
 
+const categories = [
+  { label: "Furniture", value: "18b8cf7e-397a-425e-88ec-e9a8cea4ed33" },
+  { label: "Electro", value: "61218e58-8c7a-4973-bda7-c7cc50dfdffc" },
+];
+
+const cities = [
+  {
+    label: "Bratislava 81101",
+    value: "915b4e19-5dc6-4cf3-9805-ab1be772c00e",
+  },
+  {
+    label: "Nitra 94901",
+    value: "01f633e4-b9aa-4c2f-a702-49d35e50fdeb",
+  },
+];
+
 const offersSlice = createSlice({
   name: "componentsState",
   initialState: {
-    offers: offerTest,
+    cities: cities,
+    categories: categories,
+    offers: [],
     activeOffer: 0,
   },
   reducers: {
     addOffer: (state, action) => {
-      state.channels.push(action.payload);
+      state.offers.push(action.payload);
+    },
+
+    resetOffers: (state, action) => {
+      state.offers = [];
     },
 
     setActiveOffer: (state, action) => {
@@ -72,5 +95,12 @@ const offersSlice = createSlice({
   },
 });
 
-export const { addChannel, addMessages, setActiveOffer } = offersSlice.actions;
+export const {
+  addOffer,
+  addMessages,
+  setActiveOffer,
+  setNewOffer,
+
+  resetOffers,
+} = offersSlice.actions;
 export default offersSlice.reducer;

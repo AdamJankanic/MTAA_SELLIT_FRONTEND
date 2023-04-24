@@ -90,22 +90,38 @@ import { SearchPage } from "./SearchPage";
 import { Button, View, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { setActiveScreen } from "../reducers/ComponentsReducer";
+import { useDispatch } from "react-redux";
+
+import { setImageNull } from "../reducers/ComponentsReducer";
+import { resetNewOffer } from "../reducers/OfferReducer";
+
 export function BottomNav() {
   const navigate = useNavigation();
-
+  const dispatch = useDispatch();
   function goHomePage() {
+    dispatch(setActiveScreen("HomePage"));
+    console.log("goHomePage");
     navigate.navigate("HomePage");
   }
   function goSearchPage() {
+    dispatch(setActiveScreen("SearchPage"));
     console.log("goSearchPage");
     navigate.navigate("SearchPage");
   }
 
   function goAddPage() {
+    dispatch(setImageNull());
+    dispatch(resetNewOffer());
+
+    dispatch(setActiveScreen("AddPage"));
+    console.log("goAddPage");
     navigate.navigate("AddPage");
   }
 
   function goProfilePage() {
+    dispatch(setActiveScreen("ProfilePage"));
+    console.log("goProfilePage");
     navigate.navigate("ProfilePage");
   }
 

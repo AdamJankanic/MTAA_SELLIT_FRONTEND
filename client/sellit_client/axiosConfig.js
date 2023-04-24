@@ -7,7 +7,8 @@ const apiSecret = "test";
 
 const instance = axios.create({
   // .. where we make our configurations
-  baseURL: "http://10.10.52.71:8000/api/v1/",
+  // baseURL: "http://10.10.52.71:5000/api",
+  baseURL: "https://sellitapi.herokuapp.com/api/v1",
   withCredentials: true,
 });
 
@@ -22,7 +23,7 @@ instance.interceptors.request.use((config) => {
   config.headers["X-ApiKey"] = apiKey;
   config.headers[
     "Authorization"
-  ] = `Bearer a1221156-4845-45cf-a2b5-732241cb1ecb`;
+  ] = `Bearer e73deaa0-e745-47b7-a88f-1e3df031fe8f`;
   return config;
 });
 

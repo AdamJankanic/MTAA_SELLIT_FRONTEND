@@ -20,6 +20,8 @@ export function ChooseImage() {
     const imagePermission = await ImagePicker.getMediaLibraryPermissionsAsync();
     console.log(imagePermission.status);
 
+    // const cameraPermission = await Camera.getCameraPermissionStatus();
+    // console.log(cameraPermission.status);
     setGalleryPermission(imagePermission.status === "granted");
 
     if (imagePermission.status !== "granted") {
