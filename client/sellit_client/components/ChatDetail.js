@@ -1,10 +1,50 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import * as React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { TextInput, IconButton } from "react-native-paper";
 
 import { useDispatch, useSelector } from "react-redux";
+import * as Location from "expo-location";
+import { addMessages } from "../reducers/MessagesReducer";
+import { useNavigation } from "@react-navigation/native";
 
 export function ChatDetail() {
+  const navigation = useNavigation();
+  const [location, setLocation] = React.useState(null);
+  const [errorMsg, setErrorMsg] = React.useState(null);
+
+  // React.useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
+
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   })();
+  // }, []);
+
+  // let text = "Waiting..";
+  // if (errorMsg) {
+  //   text = errorMsg;
+  // } else if (location) {
+  //   // text = JSON.stringify(location);
+  //   text =
+  //     "Latitude: " +
+  //     location.coords.latitude +
+  //     "\n" +
+  //     "Longitude: " +
+  //     location.coords.longitude;
+  // }
+
   const [message, setMessage] = React.useState("");
 
   const dispatch = useDispatch();
@@ -22,8 +62,58 @@ export function ChatDetail() {
   );
 
   function handleSend() {
-    console.log("Message sent");
-    console.log(message);
+    const newMessage = {
+      channelId: 1,
+      userId: 1,
+      nickname: "Mark",
+      message: message,
+    };
+
+    dispatch(addMessages(newMessage));
+    setMessage("");
+  }
+
+  // sending location message
+  React.useEffect(() => {
+    if (location !== null) {
+      const newMessage = {
+        channelId: 1,
+        userId: 1,
+        nickname: "Mark",
+        message: "Navigate to the Location",
+        navigation: true,
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
+      };
+
+      dispatch(addMessages(newMessage));
+    } else {
+      console.log("location is null");
+    }
+  }, [location]);
+
+  // sending location message
+  async function sendLocation() {
+    console.log("sendLocation");
+    await (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      console.log("location get inside a function");
+      let currentLocation = await Location.getCurrentPositionAsync({});
+
+      setLocation(currentLocation);
+    })();
+  }
+
+  // click on navigation message
+  function navigationMessage(message) {
+    navigation.navigate("MapPage", {
+      longitude: message.longitude,
+      latitude: message.latitude,
+    });
   }
 
   return (
@@ -54,63 +144,21 @@ export function ChatDetail() {
               key={index}
               style={message.userId === 1 ? styles.sended : styles.received}
             >
-              <Text ked={index}>{message.message}</Text>
+              {message.navigation ? (
+                <Pressable
+                  onPress={() => navigationMessage(message)}
+                  style={{
+                    backgroundColor: "orange",
+                  }}
+                >
+                  <Text ked={index}>{message.message}</Text>
+                </Pressable>
+              ) : (
+                <Text ked={index}>{message.message}</Text>
+              )}
             </View>
           );
         })}
-
-        {/* <View style={styles.received}>
-          <Text>
-            Ahoj ahoj, chcel by som od teba kupit tieto paradne hodinky. Vieme
-            sa dohodnut na 20e a jednom pivku?
-          </Text>
-        </View>
-
-        <View style={styles.sended}>
-          <Text>
-            Ahoj, v ziadnom pripade. Tieto hodinky maju ovela vyssiu hodnotu,
-            ako si myslis. Minimalne 30e a niekolko piv.
-          </Text>
-        </View>
-        <View style={styles.received}>
-          <Text>
-            Ahoj ahoj, chcel by som od teba kupit tieto paradne hodinky. Vieme
-            sa dohodnut na 20e a jednom pivku?
-          </Text>
-        </View>
-
-        <View style={styles.sended}>
-          <Text>
-            Ahoj, v ziadnom pripade. Tieto hodinky maju ovela vyssiu hodnotu,
-            ako si myslis. Minimalne 30e a niekolko piv.
-          </Text>
-        </View>
-        <View style={styles.received}>
-          <Text>
-            Ahoj ahoj, chcel by som od teba kupit tieto paradne hodinky. Vieme
-            sa dohodnut na 20e a jednom pivku?
-          </Text>
-        </View>
-
-        <View style={styles.sended}>
-          <Text>
-            Ahoj, v ziadnom pripade. Tieto hodinky maju ovela vyssiu hodnotu,
-            ako si myslis. Minimalne 30e a niekolko piv.
-          </Text>
-        </View>
-        <View style={styles.received}>
-          <Text>
-            Ahoj ahoj, chcel by som od teba kupit tieto paradne hodinky. Vieme
-            sa dohodnut na 20e a jednom pivku?
-          </Text>
-        </View>
-
-        <View style={styles.sended}>
-          <Text>
-            Ahoj, v ziadnom pripade. Tieto hodinky maju ovela vyssiu hodnotu,
-            ako si myslis. Minimalne 30e a niekolko piv.
-          </Text>
-        </View> */}
       </ScrollView>
 
       <View
@@ -124,6 +172,7 @@ export function ChatDetail() {
             width: "10%",
             // height: 50,
           }}
+          onPress={sendLocation}
         />
         <TextInput
           label="Message"

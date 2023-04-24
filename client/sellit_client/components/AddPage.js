@@ -105,7 +105,7 @@ export function AddPage() {
           onChangeText={(text) => setTitle(text)}
         />
         <DropDown
-          label={"Category"}
+          label={"City"}
           mode={"outlined"}
           value={city}
           setValue={setCity}

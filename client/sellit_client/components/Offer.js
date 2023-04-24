@@ -3,22 +3,50 @@ import { Card } from "react-native-paper";
 
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveOffer } from "../reducers/OfferReducer";
+import {
+  setActiveOffer,
+  setActiveOfferDetail,
+  resetActiveOfferDetail,
+} from "../reducers/OfferReducer";
+
+import axiosConfig from "../axiosConfig";
 
 export function Offer(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const activeOfferS = useSelector((state) => state.offerStore.activeOffer);
-  console.log("activeOfferSssssssssssssssssssssss", activeOfferS);
+  // const activeOfferS = useSelector((state) => state.offerStore.activeOffer);
+  // console.log("activeOfferSssssssssssssssssssssss", activeOfferS);
 
-  function handleOfferClick() {
+  //all cities from redux
+  const cities = useSelector((state) => state.offerStore.cities);
+  console.log("cities", cities);
+
+  let location = null;
+  cities.forEach((element) => {
+    if (element.value === props.offer.city_id) {
+      location = element.label;
+      return;
+    }
+  });
+
+  console.log("location", location);
+
+  async function handleOfferClick() {
     //set active offer
     dispatch(setActiveOffer(props.offer.id));
+    dispatch(resetActiveOfferDetail());
     console.log("activeOffer", props.offer.id);
-    console.log("changed");
+
+    const res = await axiosConfig.get(`/offers/${props.offer.id}`);
+    console.log("res.data", res.data.response);
+    dispatch(setActiveOfferDetail(res.data.response));
+
     navigation.navigate("OfferDetailPage");
   }
+
+  console.log("props.offer", props.offer);
+  // console.log("props.offer.images", props.offer.images[0]);
 
   return (
     <TouchableOpacity onPress={handleOfferClick}>
@@ -53,7 +81,7 @@ export function Offer(props) {
           <Image
             style={{ width: 50, height: 50, borderRadius: 50 }}
             // source={{ uri: "https://picsum.photos/200" }}
-            source={{ uri: props.offer.userImage }}
+            source={{ uri: props.offer.user["image_url"] }}
           />
           <View
             style={{
@@ -65,16 +93,19 @@ export function Offer(props) {
                 fontWeight: "bold",
               }}
             >
-              {props.offer.nickname}
+              {props.offer.user["name"]}
             </Text>
-            <Text>{props.offer.location}</Text>
+            <Text>{location}</Text>
           </View>
         </View>
         <Card style={{ marginBottom: 15 }}>
           <Card.Cover
             source={{
               // uri: "https://picsum.photos/700"
-              uri: props.offer.image,
+              uri:
+                props.offer.images.length > 0
+                  ? props.offer.images[0]["url"]
+                  : "https://picsum.photos/700",
             }}
           />
         </Card>

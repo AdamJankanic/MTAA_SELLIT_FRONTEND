@@ -20,6 +20,10 @@ import { ChatDetail } from "./components/ChatDetail.js";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { OfferDetail } from "./components/OfferDetail.js";
+
+import { MapPage } from "./components/MapPage.js";
+import { MapRoute } from "./components/MapRoute.js";
+
 import { Dummy } from "./components/Dummy.js";
 
 const Stack = createStackNavigator();
@@ -69,6 +73,11 @@ export default function App() {
             <Stack.Screen
               name="OfferDetailPage"
               component={OfferDetail}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MapPage"
+              component={MapRoute}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

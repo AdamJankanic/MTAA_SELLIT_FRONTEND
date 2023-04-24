@@ -79,6 +79,7 @@ const offersSlice = createSlice({
     categories: categories,
     offers: [],
     activeOffer: 0,
+    activeOfferDetail: null,
   },
   reducers: {
     addOffer: (state, action) => {
@@ -92,15 +93,23 @@ const offersSlice = createSlice({
     setActiveOffer: (state, action) => {
       state.activeOffer = action.payload;
     },
+
+    setActiveOfferDetail: (state, action) => {
+      state.activeOfferDetail = action.payload;
+    },
+
+    resetActiveOfferDetail: (state, action) => {
+      state.activeOfferDetail = null;
+    },
   },
 });
 
 export const {
   addOffer,
-  addMessages,
   setActiveOffer,
   setNewOffer,
-
+  setActiveOfferDetail,
+  resetActiveOfferDetail,
   resetOffers,
 } = offersSlice.actions;
 export default offersSlice.reducer;

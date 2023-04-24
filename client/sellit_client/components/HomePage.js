@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 export function HomePage() {
   const dispatch = useDispatch();
-  console.log("som tu HOMEPAGE");
+  // console.log("som tu HOMEPAGE");
   const offers = useSelector((state) => state.offerStore.offers);
 
   const activeScreen = useSelector(

@@ -13,10 +13,9 @@ export function SearchPage() {
   const onChangeSearch = (query) => setSearchQuery(query);
 
   allOffers = allOffers.filter((offer) => {
-    return (
-      offer.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      offer.location.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return offer.title.toLowerCase().includes(searchQuery.toLowerCase());
+    // ||
+    // offer.location.toLowerCase().includes(searchQuery.toLowerCase())
   });
 
   return (

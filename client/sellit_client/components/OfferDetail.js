@@ -1,22 +1,26 @@
 import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { Card, IconButton } from "react-native-paper";
-
+import * as React from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export function OfferDetail() {
   const activeOffer = useSelector((state) => state.offerStore.activeOffer);
 
-  const offer = useSelector((state) => state.offerStore.offers).filter(
-    (offer) => {
-      return offer.id === activeOffer;
-    }
+  const activeOfferDetail = useSelector(
+    (state) => state.offerStore.activeOfferDetail
   );
+  console.log("activeOfferDetail", activeOfferDetail);
 
-  // const offer = allOffers.find((offer) => offer.id === activeOffer);
+  const cities = useSelector((state) => state.offerStore.cities);
 
-  console.log("activeOffer detail", activeOffer);
-  // console.log("allOffers", allOffers);
-  console.log("offer", offer);
+  let location = null;
+  cities.forEach((element) => {
+    if (element.value === activeOfferDetail.city_id) {
+      location = element.label;
+      return;
+    }
+  });
 
   return (
     <View
@@ -31,6 +35,8 @@ export function OfferDetail() {
       <View
         style={{
           flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
           gap: 15,
           marginBottom: 10,
         }}
@@ -41,11 +47,24 @@ export function OfferDetail() {
             fontSize: 25,
           }}
         >
-          {offer[0].title}
+          {activeOfferDetail.title}
+        </Text>
+
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 18,
+          }}
+        >
+          Views: {activeOfferDetail.views}
         </Text>
       </View>
       <Card style={{ marginBottom: 15 }}>
-        <Card.Cover source={{ uri: offer[0].image }} />
+        <Card.Cover
+          source={{
+            uri: activeOfferDetail.images[0]["url"],
+          }}
+        />
       </Card>
 
       <View
@@ -71,7 +90,7 @@ export function OfferDetail() {
               fontSize: 20,
             }}
           >
-            {offer[0].location}, 048 07
+            {location}
           </Text>
         </View>
         <Text
@@ -80,7 +99,7 @@ export function OfferDetail() {
             fontSize: 20,
           }}
         >
-          {offer[0].price}$
+          {activeOfferDetail.price}$
         </Text>
       </View>
       <View
@@ -93,7 +112,7 @@ export function OfferDetail() {
           {/* Description of the offer goes here and it can be very long. Lorem
           ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl
           eget ultricies lacinia, nunc nisl aliquet nunc, eget aliquet nunc */}
-          {offer[0].description}
+          {activeOfferDetail.description}
         </Text>
       </View>
 

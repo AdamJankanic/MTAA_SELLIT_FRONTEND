@@ -112,7 +112,6 @@ export function BottomNav() {
 
   function goAddPage() {
     dispatch(setImageNull());
-    dispatch(resetNewOffer());
 
     dispatch(setActiveScreen("AddPage"));
     console.log("goAddPage");
