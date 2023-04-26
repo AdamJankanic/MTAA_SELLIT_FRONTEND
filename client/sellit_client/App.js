@@ -24,7 +24,9 @@ import { OfferDetail } from "./components/OfferDetail.js";
 import { MapPage } from "./components/MapPage.js";
 import { MapRoute } from "./components/MapRoute.js";
 
-import { Dummy } from "./components/Dummy.js";
+import { LoginPage } from "./components/LoginPage.js";
+import { RegisterPage } from "./components/RegisterPage.js";
+import { ProfilePage } from "./components/ProfilePage.js";
 
 const Stack = createStackNavigator();
 
@@ -57,7 +59,7 @@ export default function App() {
             />
             <Stack.Screen
               name="ProfilePage"
-              component={HomePage}
+              component={ProfilePage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -78,6 +80,16 @@ export default function App() {
             <Stack.Screen
               name="MapPage"
               component={MapRoute}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="LoginPage"
+              component={LoginPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="RegisterPage"
+              component={RegisterPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

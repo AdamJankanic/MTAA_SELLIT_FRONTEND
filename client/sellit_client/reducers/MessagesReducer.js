@@ -121,9 +121,11 @@ const channelsTest = [
 const messagesSlice = createSlice({
   name: "componentsState",
   initialState: {
-    channels: [],
+    buyChannels: [],
+    sellChannels: [],
     messages: [],
     activeChannel: 0,
+    activeChannelDetail: null,
   },
   reducers: {
     addMessages: (state, action) => {
@@ -134,25 +136,35 @@ const messagesSlice = createSlice({
       state.messages = [];
     },
 
-    addChannel: (state, action) => {
-      state.channels.push(action.payload);
+    addBuyChannel: (state, action) => {
+      state.buyChannels.push(action.payload);
+    },
+    addSellChannel: (state, action) => {
+      state.sellChannels.push(action.payload);
     },
 
     resetChannels: (state) => {
-      state.channels = [];
+      state.buyChannels = [];
+      state.sellChannels = [];
     },
 
     setActiveChannel: (state, action) => {
       state.activeChannel = action.payload;
     },
+
+    setActiveChannelDetail: (state, action) => {
+      state.activeChannelDetail = action.payload;
+    },
   },
 });
 
 export const {
-  addChannel,
+  addBuyChannel,
+  addSellChannel,
   resetChannels,
   addMessages,
   resetMessages,
   setActiveChannel,
+  setActiveChannelDetail,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

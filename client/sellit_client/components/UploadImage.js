@@ -172,7 +172,7 @@ export function UploadImage({ navigation }) {
     }
   };
 
-  console.log("imageUri from redux store");
+  // console.log("imageUri from redux store");
   // console.log(useSelector((state) => state.componentsStore.image));
 
   return (

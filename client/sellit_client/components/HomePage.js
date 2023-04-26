@@ -36,10 +36,10 @@ export function HomePage() {
           });
         })
         .catch((error) => {
-          console.log("error", error); // TypeError: failed to fetch
+          console.log("error home page inside fetchoffers", error); // TypeError: failed to fetch
         });
     } catch (error) {
-      console.log("error", error.response.data);
+      console.log("error home page offers", error.response.data);
     }
   }
 
@@ -48,44 +48,18 @@ export function HomePage() {
       .get(`/users/me`)
       .then((res) => {
         // console.log("res", res.data.response);
+        console.log("user me switched", res.data.response);
         dispatch(setUser(res.data.response));
       })
       .catch((error) => {
-        console.log("error", error);
+        console.log("error get me", error);
       });
   }
-
-  // async function fetchOffers() {
-  //   console.log("som tu fetchOffers");
-  //   try {
-  //     await fetch(
-  //       // "http://10.10.52.71:5000/api/chat/mychats/a45a5324-ddb4-43f2-b325-1a717654c505",
-  //       "https://sellitapi.herokuapp.com/api/v1/offers",
-  //       {
-  //         method: "GET",
-  //         // headers: {
-  //         //   "Content-Type": "application/json",
-  //         //   "X-ApiKey": "695818fb-4c50-4daa-a4ba-a74c4d9d6b77",
-  //         //   "X-Signature": "test",
-  //         // },
-  //       }
-  //     )
-  //       .then((response) => response.json())
-  //       .then((json) => {
-  //         console.log("json", json);
-  //       })
-  //       .catch((error) => {
-  //         console.log("error", error);
-  //       });
-  //   } catch (error) {
-  //     console.log("error2", error);
-  //   }
-  // }
 
   useEffect(() => {
     fetchOffers();
     getMe();
-  }, [activeScreen === "HomePage"]);
+  }, [activeScreen]);
 
   return (
     <View

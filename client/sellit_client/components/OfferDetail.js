@@ -7,17 +7,37 @@ import { addChannel, setActiveChannel } from "../reducers/MessagesReducer";
 import { setActiveScreen } from "../reducers/ComponentsReducer";
 import { useNavigation } from "@react-navigation/native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosConfig from "../axiosConfig";
 
 export function OfferDetail() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [token, setStoredData] = React.useState(null);
+
+  useEffect(() => {
+    retrieveToken();
+  }, []);
+
+  // Retrieve data from AsyncStorage
+  const retrieveToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+
+      setStoredData(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log("token", token);
 
   const activeOffer = useSelector((state) => state.offerStore.activeOffer);
   const activeOfferDetail = useSelector(
     (state) => state.offerStore.activeOfferDetail
   );
-  // console.log("activeOfferDetail", activeOfferDetail);
+
+  const user = useSelector((state) => state.componentsStore.user);
 
   const cities = useSelector((state) => state.offerStore.cities);
 
@@ -36,7 +56,7 @@ export function OfferDetail() {
       await axiosConfig
         .post(`/offers/${activeOfferDetail.id}/chat`)
         .then((res) => {
-          console.log("res", res.data.response);
+          // console.log("res", res.data.response);
           dispatch(addChannel(res.data.response));
 
           dispatch(setActiveChannel(res.data.response.id));
@@ -44,10 +64,11 @@ export function OfferDetail() {
           navigation.navigate("ChatDetailPage");
         });
     } catch (error) {
-      console.log("error", error.response.data);
+      console.log("error offer detail", error.response.data);
     }
   }
 
+  console.log("activeOfferDetail", activeOfferDetail);
   return (
     <View
       style={{
@@ -151,13 +172,17 @@ export function OfferDetail() {
           marginTop: 10,
           borderRadius: 20,
           elevation: 3,
-          backgroundColor: "black",
+          backgroundColor:
+            activeOfferDetail.user.id === user?.id || !token
+              ? "rgba(0, 0, 0, 0.1)"
+              : "black",
         }}
         onPress={() => {
           contactSeller();
         }}
+        disabled={activeOfferDetail.user.id === user?.id || !token}
       >
-        <Text
+        {/* <Text
           style={{
             fontSize: 15,
             lineHeight: 20,
@@ -167,6 +192,22 @@ export function OfferDetail() {
           }}
         >
           Contact Seller
+        </Text> */}
+
+        <Text
+          style={{
+            fontSize: 15,
+            lineHeight: 20,
+            fontWeight: "bold",
+            letterSpacing: 0.25,
+            color: "white",
+          }}
+        >
+          {!token
+            ? "You need to be logged in to contact seller"
+            : activeOfferDetail.user.id === user?.id
+            ? "You can't contact yourself"
+            : "Contact Seller"}
         </Text>
       </Pressable>
     </View>

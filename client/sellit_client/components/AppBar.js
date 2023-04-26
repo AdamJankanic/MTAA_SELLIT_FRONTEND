@@ -3,13 +3,37 @@ import { Appbar, Drawer } from "react-native-paper";
 import { View, Text } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
-import { drawerOpen } from "../reducers/ComponentsReducer";
+import { drawerOpen, setActiveScreen } from "../reducers/ComponentsReducer";
 import { useNavigation } from "@react-navigation/native";
 
-import { addChannel, resetChannels } from "../reducers/MessagesReducer";
+import {
+  addBuyChannel,
+  addSellChannel,
+  resetChannels,
+} from "../reducers/MessagesReducer";
 import axiosConfig from "../axiosConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function AppBar() {
+  const [token, setStoredData] = React.useState(null);
+  const activeScreen = useSelector(
+    (state) => state.componentsStore.activeScreen
+  );
+  React.useEffect(() => {
+    retrieveToken();
+  }, [activeScreen]);
+
+  // Retrieve data from AsyncStorage
+  const retrieveToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+
+      setStoredData(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const drawer = useSelector((state) => state.componentsStore.drawer);
@@ -22,28 +46,40 @@ export function AppBar() {
   }
 
   async function chatClick() {
-    console.log("chat");
-    //navigate to add page
-    try {
-      // console.log("Chats useEffect", user);
-      await axiosConfig
-        .get(`/users/${user.id}/chats`)
-        // .get(`/users/${user.id}/chats?owner="True"`)
-        .then((res) => {
-          // console.log("res", res.data.items);
-          dispatch(resetChannels());
-
-          res.data.items.forEach((channel) => {
-            dispatch(addChannel(channel));
-          });
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-    } catch (error) {
-      console.log("error", error.response.data);
+    if (!token) {
+      dispatch(setActiveScreen("LoginPage"));
+      navigation.navigate("LoginPage");
+      return;
     }
 
+    try {
+      await axiosConfig.get(`/users/${user.id}/chats`).then((res) => {
+        console.log("res buy chats", res.data);
+
+        dispatch(resetChannels());
+        res.data.items.forEach((channel) => {
+          dispatch(addBuyChannel(channel));
+        });
+      });
+    } catch (error) {
+      console.log("error app bar buy chats", error);
+    }
+
+    try {
+      await axiosConfig
+        .get(`/users/${user.id}/chats?owner="True"`)
+        .then((res) => {
+          console.log("res sell chats", res.data);
+
+          res?.data?.items?.forEach((channel) => {
+            dispatch(addSellChannel(channel));
+          });
+        });
+    } catch (error) {
+      console.log("error app bar sell chats", error);
+    }
+
+    dispatch(setActiveScreen("ChatPage"));
     navigation.navigate("ChatPage");
   }
 

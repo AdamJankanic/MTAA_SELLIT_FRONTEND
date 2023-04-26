@@ -89,7 +89,7 @@ export function Offer(props) {
                 fontWeight: "bold",
               }}
             >
-              {props.offer.user["name"]}
+              {props.offer.user["username"]}
             </Text>
             <Text>{location}</Text>
           </View>

@@ -44,13 +44,16 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyC03EQjaitDtft_wG5LBfGvYr6p8L2AEto";
 
 export function MapRoute({ route }) {
   // const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-  const destination = { latitude: 48.142198, longitude: 17.100426 };
+  // const destination = { latitude: 48.142198, longitude: 17.100426 };
 
   console.log("MapRoute");
   console.log(route.params);
 
-  const originLatitude = route.params.latitude;
-  const originLongitude = route.params.longitude;
+  const origin = route.params.buyerLocation;
+  const destination = route.params.sellerLocation;
+
+  // const originLatitude = route.params.latitude;
+  // const originLongitude = route.params.longitude;
 
   return (
     <View
@@ -61,8 +64,8 @@ export function MapRoute({ route }) {
     >
       <MapView
         initialRegion={{
-          latitude: originLatitude,
-          longitude: originLongitude,
+          latitude: origin.latitude,
+          longitude: origin.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -73,12 +76,15 @@ export function MapRoute({ route }) {
       >
         <MapViewDirections
           origin={{
-            latitude: originLatitude,
-            longitude: originLongitude,
+            latitude: origin.latitude,
+            longitude: origin.longitude,
           }}
-          destination={destination}
+          destination={{
+            latitude: destination.latitude + 0.05,
+            longitude: destination.longitude + 0.05,
+          }}
           apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={4}
+          strokeWidth={5}
           strokeColor="hotpink"
         />
       </MapView>

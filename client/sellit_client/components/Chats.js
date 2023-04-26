@@ -14,35 +14,24 @@ import { Chat } from "./Chat";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addChannel, resetChannels } from "../reducers/MessagesReducer";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosConfig from "../axiosConfig";
 
 export function Chats() {
   const dispatch = useDispatch();
 
-  let channels = useSelector((state) => state.messagesStore.channels);
+  let buyChannels = useSelector((state) => state.messagesStore.buyChannels);
+  let sellChannels = useSelector((state) => state.messagesStore.sellChannels);
   const messages = useSelector((state) => state.messagesStore.messages);
-  let [displayChannels, setDisplayChannels] = React.useState(channels);
+  let [displayChannels, setDisplayChannels] = React.useState(
+    buyChannels.length > 0 ? buyChannels : sellChannels
+  );
 
-  const [sellMessage, setSellMessage] = React.useState(null);
-  const [buyMessage, setBuyMessage] = React.useState(null);
+  const [activeButton, setActiveButton] = React.useState(
+    buyChannels.length > 0 ? "buy" : "sell"
+  );
 
   const user = useSelector((state) => state.componentsStore.user);
-
-  // React.useEffect(() => {
-  //   async function getMessages() {
-  //     try {
-  //       await axiosConfig
-  //         .get(`/users/${user.id}/chats?owner="True"`)
-  //         .then((res) => {
-  //           console.log("res messages", res.data);
-  //         });
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   }
-  //   getMessages();
-  // }, []);
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
@@ -54,19 +43,13 @@ export function Chats() {
   });
 
   function handleBuy() {
-    setDisplayChannels(
-      channels.filter((channel) => {
-        return channel.myOffer === false;
-      })
-    );
+    setActiveButton("buy");
+    setDisplayChannels(buyChannels);
   }
 
   function handleSell() {
-    setDisplayChannels(
-      channels.filter((channel) => {
-        return channel.myOffer === true;
-      })
-    );
+    setActiveButton("sell");
+    setDisplayChannels(sellChannels);
   }
 
   return (
@@ -95,11 +78,45 @@ export function Chats() {
           backgroundColor: "white",
         }}
       >
-        <Pressable style={styles.button} onPress={handleBuy}>
-          <Text style={styles.text}>Buy</Text>
+        <Pressable
+          style={[
+            styles.button,
+            {
+              backgroundColor: activeButton === "buy" ? "black" : "white",
+            },
+          ]}
+          onPress={handleBuy}
+        >
+          <Text
+            style={[
+              styles.text,
+              {
+                color: activeButton === "buy" ? "white" : "black",
+              },
+            ]}
+          >
+            Buy
+          </Text>
         </Pressable>
-        <Pressable style={styles.button} onPress={handleSell}>
-          <Text style={styles.text}>Sell</Text>
+        <Pressable
+          style={[
+            styles.button,
+            {
+              backgroundColor: activeButton === "sell" ? "black" : "white",
+            },
+          ]}
+          onPress={handleSell}
+        >
+          <Text
+            style={[
+              styles.text,
+              {
+                color: activeButton === "sell" ? "white" : "black",
+              },
+            ]}
+          >
+            Sell
+          </Text>
         </Pressable>
       </View>
 

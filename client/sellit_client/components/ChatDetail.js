@@ -26,13 +26,15 @@ export function ChatDetail() {
     (state) => state.messagesStore.activeChannel
   );
 
-  const [location, setLocation] = React.useState(null);
-  const [errorMsg, setErrorMsg] = React.useState(null);
-
-  const user = useSelector((state) => state.componentsStore.user);
   const activeChannelDetail = useSelector(
-    (state) => state.componentsStore.activeChannelDetail
+    (state) => state.messagesStore.activeChannelDetail
   );
+  const user = useSelector((state) => state.componentsStore.user);
+
+  const [location, setLocation] = React.useState(null);
+  const [buyerLocation, setBuyerLocation] = React.useState(null);
+  const [sellerLocation, setSellerLocation] = React.useState(null);
+  const [errorMsg, setErrorMsg] = React.useState(null);
 
   const activeScreen = useSelector(
     (state) => state.componentsStore.activeScreen
@@ -42,7 +44,7 @@ export function ChatDetail() {
     async function fetchMessages() {
       try {
         await axiosConfig
-          .get(`chats/${activeChannelId}/messages`)
+          .get(`chats/${activeChannelId}/messages?limit=1000`)
           .then((res) => {
             // console.log("res", res.data.items);
             // dispatch(addMessages(res.data));
@@ -52,7 +54,7 @@ export function ChatDetail() {
             });
           });
       } catch (error) {
-        console.log("error", error.response.data);
+        console.log("error chat detail messages", error.response.data);
       }
     }
 
@@ -63,6 +65,8 @@ export function ChatDetail() {
 
   const messages = useSelector((state) => state.messagesStore.messages);
 
+  /*************************************************************************/
+  // Websocket
   const websocketUUID = useSelector(
     (state) => state.componentsStore.websocketUUID
   );
@@ -74,25 +78,25 @@ export function ChatDetail() {
       // Create a WebSocket instance if it doesn't exist
       console.log("createWebSocket activeChannelId", activeChannelId);
       socketRef.current = createWebSocket(activeChannelId);
-      dispatch(addWebSocketUUID(activeChannelId));
     }
     const socket = socketRef.current;
 
-    socket.addEventListener("open", () => {
-      console.log(`WebSocket connected for chat ${activeChannelId}`);
-    });
-
-    // Dispatch an action with the received message
-
-    socket.addEventListener("close", () => {
-      console.log(`WebSocket disconnected for chat ${activeChannelId}`);
-    });
-
-    socket.addEventListener("error", (event) => {
-      console.error(`WebSocket error for chat ${activeChannelId}:`, event);
-    });
-
     if (!websocketUUID.includes(activeChannelId)) {
+      dispatch(addWebSocketUUID(activeChannelId));
+      socket.addEventListener("open", () => {
+        console.log(`WebSocket connected for chat ${activeChannelId}`);
+      });
+
+      // Dispatch an action with the received message
+
+      socket.addEventListener("close", () => {
+        console.log(`WebSocket disconnected for chat ${activeChannelId}`);
+      });
+
+      socket.addEventListener("error", (event) => {
+        console.error(`WebSocket error for chat ${activeChannelId}:`, event);
+      });
+
       socket.addEventListener("message", (event) => {
         // console.log("event", event);
         const message = JSON.parse(event.data);
@@ -172,14 +176,53 @@ export function ChatDetail() {
     })();
   }
 
+  //buyer location
+  async function getBuyerLocation() {
+    console.log("sendLocation");
+    await (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      console.log("location get inside a function");
+      let currentLocation = await Location.getCurrentPositionAsync({});
+
+      setBuyerLocation(currentLocation);
+    })();
+  }
+
   // console.log("location", location);
   // click on navigation message
-  function navigationMessage(message) {
-    navigation.navigate("MapPage", {
-      longitude: Number(message.location.longitude),
+  async function navigationMessage(message) {
+    console.log(
+      "navigationMessage",
+      Number(message.location.latitude),
+      Number(message.location.longitude)
+    );
+
+    setSellerLocation({
       latitude: Number(message.location.latitude),
+      longitude: Number(message.location.longitude),
     });
+
+    await getBuyerLocation();
   }
+  React.useEffect(() => {
+    console.log("user location", buyerLocation?.coords.latitude);
+
+    if (buyerLocation !== null) {
+      const buyLoc = {
+        latitude: buyerLocation?.coords.latitude,
+        longitude: buyerLocation?.coords.longitude,
+      };
+
+      navigation.navigate("MapPage", {
+        sellerLocation: sellerLocation,
+        buyerLocation: buyLoc,
+      });
+    }
+  }, [buyerLocation]);
 
   //convert string to number
 
@@ -219,7 +262,8 @@ export function ChatDetail() {
                   : styles.received
               }
             >
-              {message.location ? (
+              {message.location &&
+              user.id !== activeChannelDetail.offer.user.id ? (
                 <Pressable
                   onPress={() => navigationMessage(message)}
                   style={{
@@ -227,9 +271,10 @@ export function ChatDetail() {
                   }}
                 >
                   <Text ked={index}>
-                    {message.location.longitude +
+                    {/* {message.location.longitude +
                       " " +
-                      message.location.latitude}
+                      message.location.latitude} */}
+                    NAVIGATE
                   </Text>
                 </Pressable>
               ) : (
@@ -254,6 +299,10 @@ export function ChatDetail() {
           style={{
             width: "10%",
             // height: 50,
+            // console.log("user", user);
+            // console.log("activeChannelDetail", activeChannelDetail.offer.user);
+            display:
+              user.id === activeChannelDetail.offer.user.id ? "flex" : "none",
           }}
           onPress={sendLocation}
         />
@@ -266,7 +315,8 @@ export function ChatDetail() {
           style={{
             justifyContent: "flex-end",
             backgroundColor: "white",
-            width: "85%",
+            width:
+              user.id === activeChannelDetail.offer.user.id ? "85%" : "100%",
           }}
         />
       </View>

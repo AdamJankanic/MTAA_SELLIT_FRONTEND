@@ -3,7 +3,10 @@ import { Card } from "react-native-paper";
 
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { setActiveChannel } from "../reducers/MessagesReducer";
+import {
+  setActiveChannel,
+  setActiveChannelDetail,
+} from "../reducers/MessagesReducer";
 import { setActiveScreen } from "../reducers/ComponentsReducer";
 
 export function Chat(props) {
@@ -15,6 +18,7 @@ export function Chat(props) {
 
     //set active channel
     dispatch(setActiveChannel(props.channelProp.id));
+    dispatch(setActiveChannelDetail(props.channelProp));
     dispatch(setActiveScreen("ChatDetail"));
     //navigate to add page
 
