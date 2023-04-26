@@ -3,6 +3,8 @@ import { Offer } from "./Offer";
 
 import { useSelector, useDispatch } from "react-redux";
 import { addOffer, resetOffers } from "../reducers/OfferReducer";
+import { setUser } from "../reducers/ComponentsReducer";
+
 import axiosConfig from "../axiosConfig";
 
 import { useEffect } from "react";
@@ -25,11 +27,11 @@ export function HomePage() {
         .get("/offers")
         // .get("/chat/mychats/a45a5324-ddb4-43f2-b325-1a717654c505")
         .then((response) => {
-          console.log("response.data.offers", response.data.items);
+          // console.log("response.data.offers", response.data.items);
 
           dispatch(resetOffers());
           response.data.items.forEach((offer) => {
-            console.log("offer", offer);
+            // console.log("offer", offer);
             dispatch(addOffer(offer));
           });
         })
@@ -37,8 +39,20 @@ export function HomePage() {
           console.log("error", error); // TypeError: failed to fetch
         });
     } catch (error) {
-      console.log("error", error);
+      console.log("error", error.response.data);
     }
+  }
+
+  async function getMe() {
+    await axiosConfig
+      .get(`/users/me`)
+      .then((res) => {
+        // console.log("res", res.data.response);
+        dispatch(setUser(res.data.response));
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   }
 
   // async function fetchOffers() {
@@ -70,6 +84,7 @@ export function HomePage() {
 
   useEffect(() => {
     fetchOffers();
+    getMe();
   }, [activeScreen === "HomePage"]);
 
   return (

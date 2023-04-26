@@ -31,19 +31,19 @@ export function AddPage() {
   const [cityVisible, setCityVisible] = React.useState(false);
 
   const categories = [
-    { label: "Furniture", value: "18b8cf7e-397a-425e-88ec-e9a8cea4ed33" },
-    { label: "Electro", value: "61218e58-8c7a-4973-bda7-c7cc50dfdffc" },
+    { label: "Clothes", value: "500d27a0-f09c-4964-bc3e-3f85392d6ecc" },
+    // { label: "Electro", value: "61218e58-8c7a-4973-bda7-c7cc50dfdffc" },
   ];
 
   const cities = [
     {
-      label: "Bratislava 81101",
-      value: "915b4e19-5dc6-4cf3-9805-ab1be772c00e",
+      label: "Bratislava",
+      value: "14baa92e-0950-4c58-b59d-acf3a5507dda",
     },
-    {
-      label: "Nitra 94901",
-      value: "01f633e4-b9aa-4c2f-a702-49d35e50fdeb",
-    },
+    // {
+    //   label: "Nitra 94901",
+    //   value: "01f633e4-b9aa-4c2f-a702-49d35e50fdeb",
+    // },
   ];
 
   const imageBase64 = useSelector((state) => state.componentsStore.image);

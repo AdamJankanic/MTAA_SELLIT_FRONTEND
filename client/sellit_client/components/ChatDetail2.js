@@ -12,12 +12,9 @@ import { TextInput, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as Location from "expo-location";
 import { addMessages, resetMessages } from "../reducers/MessagesReducer";
-import { addWebSocketUUID } from "../reducers/ComponentsReducer";
 
 import { useNavigation } from "@react-navigation/native";
 import axiosConfig from "../axiosConfig";
-
-import createWebSocket from "../Websockets";
 
 export function ChatDetail() {
   const navigation = useNavigation();
@@ -44,7 +41,7 @@ export function ChatDetail() {
         await axiosConfig
           .get(`chats/${activeChannelId}/messages`)
           .then((res) => {
-            // console.log("res", res.data.items);
+            console.log("res", res.data.items);
             // dispatch(addMessages(res.data));
             dispatch(resetMessages());
             res.data.items.forEach((message) => {
@@ -59,57 +56,48 @@ export function ChatDetail() {
     fetchMessages();
   }, []);
 
+  console.log("activeScreen", activeScreen);
+  console.log("activeChannelId", activeChannelId);
+  const ws = new WebSocket(
+    `wss://sellitapi.herokuapp.com/${activeChannelId}/chat/`
+  );
+
+  ws.onopen = () => {
+    // connection opened
+    console.log("ws.onopen");
+  };
+
+  ws.onerror = (e) => {
+    // an error occurred
+    console.log("ws.onerror", e);
+  };
+
+  w;
+
+  if (activeScreen === "ChatDetail") {
+    console.log("ChatDetail active");
+  } else {
+    console.log("ChatDetail inactive");
+
+    ws.close();
+  }
+
+  // React.useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
+
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   })();
+  // }, []);
+
   const [message, setMessage] = React.useState("");
 
   const messages = useSelector((state) => state.messagesStore.messages);
-
-  const websocketUUID = useSelector(
-    (state) => state.componentsStore.websocketUUID
-  );
-
-  const socketRef = React.useRef(null);
-
-  React.useEffect(() => {
-    if (!socketRef.current) {
-      // Create a WebSocket instance if it doesn't exist
-      console.log("createWebSocket activeChannelId", activeChannelId);
-      socketRef.current = createWebSocket(activeChannelId);
-      dispatch(addWebSocketUUID(activeChannelId));
-    }
-    const socket = socketRef.current;
-
-    socket.addEventListener("open", () => {
-      console.log(`WebSocket connected for chat ${activeChannelId}`);
-    });
-
-    // Dispatch an action with the received message
-
-    socket.addEventListener("close", () => {
-      console.log(`WebSocket disconnected for chat ${activeChannelId}`);
-    });
-
-    socket.addEventListener("error", (event) => {
-      console.error(`WebSocket error for chat ${activeChannelId}:`, event);
-    });
-
-    if (!websocketUUID.includes(activeChannelId)) {
-      socket.addEventListener("message", (event) => {
-        // console.log("event", event);
-        const message = JSON.parse(event.data);
-        console.log("message", message);
-        dispatch(addMessages(message));
-      });
-    }
-
-    return () => {
-      // Remove the event listeners when the component is unmounted
-      console.log("unmounting socket");
-      socket.removeEventListener("open");
-      socket.removeEventListener("message");
-      socket.removeEventListener("close");
-      socket.removeEventListener("error");
-    };
-  }, [activeChannelId]);
 
   function handleSend() {
     const newMessage = {
@@ -120,12 +108,14 @@ export function ChatDetail() {
       location: false,
     };
 
-    const socket = socketRef.current;
-    if (socket.readyState === WebSocket.OPEN) {
-      const messageStr = JSON.stringify(newMessage);
-      socket.send(messageStr);
+    console.log("newMessage", JSON.stringify(newMessage));
+    if (ws.readyState === WebSocket.OPEN) {
+      console.log("ws.readyState  message send");
+      ws.send(JSON.stringify(newMessage));
     }
+    console.log(activeChannelId);
 
+    // dispatch(addMessages(newMessage));
     setMessage("");
   }
 
@@ -144,10 +134,9 @@ export function ChatDetail() {
       console.log("newMessageStr", newMessageStr);
       // ws.send(JSON.stringify(newMessageStr));
 
-      const socket = socketRef.current;
-      if (socket.readyState === WebSocket.OPEN) {
-        const messageStr = JSON.stringify(newMessage);
-        socket.send(messageStr);
+      if (ws.readyState === WebSocket.OPEN) {
+        console.log("ws.readyState location send");
+        ws.send(newMessageStr);
       }
 
       // dispatch(addMessages(newMessage));
@@ -176,12 +165,10 @@ export function ChatDetail() {
   // click on navigation message
   function navigationMessage(message) {
     navigation.navigate("MapPage", {
-      longitude: Number(message.location.longitude),
-      latitude: Number(message.location.latitude),
+      longitude: message.longitude,
+      latitude: message.latitude,
     });
   }
-
-  //convert string to number
 
   // console.log("messages", messages);
   // messages.map((message) => {
@@ -213,10 +200,7 @@ export function ChatDetail() {
             <View
               key={index}
               style={
-                (message.user?.id ? message.user?.id : message.user_id) ===
-                user.id
-                  ? styles.sended
-                  : styles.received
+                message.user.id === user.id ? styles.sended : styles.received
               }
             >
               {message.location ? (
@@ -233,11 +217,7 @@ export function ChatDetail() {
                   </Text>
                 </Pressable>
               ) : (
-                <Text ked={index}>
-                  {message.content?.length > 0
-                    ? message.content
-                    : message.message}
-                </Text>
+                <Text ked={index}>{message.content}</Text>
               )}
             </View>
           );

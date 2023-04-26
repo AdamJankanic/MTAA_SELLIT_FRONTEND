@@ -64,7 +64,7 @@ const categories = [
 const cities = [
   {
     label: "Bratislava 81101",
-    value: "915b4e19-5dc6-4cf3-9805-ab1be772c00e",
+    value: "14baa92e-0950-4c58-b59d-acf3a5507dda",
   },
   {
     label: "Nitra 94901",

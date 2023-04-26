@@ -2,15 +2,22 @@ import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import * as React from "react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addChannel, setActiveChannel } from "../reducers/MessagesReducer";
+import { setActiveScreen } from "../reducers/ComponentsReducer";
+import { useNavigation } from "@react-navigation/native";
+
+import axiosConfig from "../axiosConfig";
 
 export function OfferDetail() {
-  const activeOffer = useSelector((state) => state.offerStore.activeOffer);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
+  const activeOffer = useSelector((state) => state.offerStore.activeOffer);
   const activeOfferDetail = useSelector(
     (state) => state.offerStore.activeOfferDetail
   );
-  console.log("activeOfferDetail", activeOfferDetail);
+  // console.log("activeOfferDetail", activeOfferDetail);
 
   const cities = useSelector((state) => state.offerStore.cities);
 
@@ -21,6 +28,25 @@ export function OfferDetail() {
       return;
     }
   });
+
+  async function contactSeller() {
+    console.log("contactSeller");
+    console.log("activeOfferDetail", activeOfferDetail.id);
+    try {
+      await axiosConfig
+        .post(`/offers/${activeOfferDetail.id}/chat`)
+        .then((res) => {
+          console.log("res", res.data.response);
+          dispatch(addChannel(res.data.response));
+
+          dispatch(setActiveChannel(res.data.response.id));
+          dispatch(setActiveScreen("ChatDetail"));
+          navigation.navigate("ChatDetailPage");
+        });
+    } catch (error) {
+      console.log("error", error.response.data);
+    }
+  }
 
   return (
     <View
@@ -126,6 +152,9 @@ export function OfferDetail() {
           borderRadius: 20,
           elevation: 3,
           backgroundColor: "black",
+        }}
+        onPress={() => {
+          contactSeller();
         }}
       >
         <Text

@@ -4,6 +4,7 @@ import { Card } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setActiveChannel } from "../reducers/MessagesReducer";
+import { setActiveScreen } from "../reducers/ComponentsReducer";
 
 export function Chat(props) {
   const navigation = useNavigation();
@@ -14,8 +15,9 @@ export function Chat(props) {
 
     //set active channel
     dispatch(setActiveChannel(props.channelProp.id));
-
+    dispatch(setActiveScreen("ChatDetail"));
     //navigate to add page
+
     navigation.navigate("ChatDetailPage");
   }
 
@@ -54,7 +56,7 @@ export function Chat(props) {
               fontSize: 15,
             }}
           >
-            {props.channelProp.title}
+            {props.channelProp.offer.title}
           </Text>
         </View>
 
@@ -84,7 +86,7 @@ export function Chat(props) {
               fontWeight: "bold",
             }}
           >
-            {props.channelProp.price}
+            {props.channelProp.offer.price}$
           </Text>
         </View>
 
@@ -109,9 +111,17 @@ export function Chat(props) {
                 fontWeight: "bold",
               }}
             >
-              {props.channelProp.nickname}
+              {props.channelProp.last_message_user
+                ? props.channelProp.last_message_user
+                : ""}
+              {/* Milanko */}
             </Text>
-            <Text>{props.channelProp.message}</Text>
+            <Text>
+              {props.channelProp.last_message_content
+                ? props.channelProp.last_message_content
+                : ""}
+              {/* Hello, I am interested in your offer. */}
+            </Text>
           </View>
         </View>
       </View>

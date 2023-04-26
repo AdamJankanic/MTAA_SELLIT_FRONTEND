@@ -20,7 +20,6 @@ export function Offer(props) {
 
   //all cities from redux
   const cities = useSelector((state) => state.offerStore.cities);
-  console.log("cities", cities);
 
   let location = null;
   cities.forEach((element) => {
@@ -29,8 +28,6 @@ export function Offer(props) {
       return;
     }
   });
-
-  console.log("location", location);
 
   async function handleOfferClick() {
     //set active offer
@@ -45,7 +42,6 @@ export function Offer(props) {
     navigation.navigate("OfferDetailPage");
   }
 
-  console.log("props.offer", props.offer);
   // console.log("props.offer.images", props.offer.images[0]);
 
   return (

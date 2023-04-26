@@ -13,7 +13,9 @@ import { Searchbar } from "react-native-paper";
 import { Chat } from "./Chat";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addChannel } from "../reducers/MessagesReducer";
+import { addChannel, resetChannels } from "../reducers/MessagesReducer";
+
+import axiosConfig from "../axiosConfig";
 
 export function Chats() {
   const dispatch = useDispatch();
@@ -22,15 +24,33 @@ export function Chats() {
   const messages = useSelector((state) => state.messagesStore.messages);
   let [displayChannels, setDisplayChannels] = React.useState(channels);
 
+  const [sellMessage, setSellMessage] = React.useState(null);
+  const [buyMessage, setBuyMessage] = React.useState(null);
+
+  const user = useSelector((state) => state.componentsStore.user);
+
+  // React.useEffect(() => {
+  //   async function getMessages() {
+  //     try {
+  //       await axiosConfig
+  //         .get(`/users/${user.id}/chats?owner="True"`)
+  //         .then((res) => {
+  //           console.log("res messages", res.data);
+  //         });
+  //     } catch (error) {
+  //       console.log("error", error);
+  //     }
+  //   }
+  //   getMessages();
+  // }, []);
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
 
-  // displayChannels = channels.filter((channel) => {
-  //   return channel.title.toLowerCase().includes(searchQuery.toLowerCase());
-  // });
-
   displayChannels = displayChannels.filter((channel) => {
-    return channel.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return channel.offer.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
   });
 
   function handleBuy() {

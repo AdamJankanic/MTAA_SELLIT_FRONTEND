@@ -6,19 +6,44 @@ import { useSelector, useDispatch } from "react-redux";
 import { drawerOpen } from "../reducers/ComponentsReducer";
 import { useNavigation } from "@react-navigation/native";
 
+import { addChannel, resetChannels } from "../reducers/MessagesReducer";
+import axiosConfig from "../axiosConfig";
+
 export function AppBar() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const drawer = useSelector((state) => state.componentsStore.drawer);
+
+  const user = useSelector((state) => state.componentsStore.user);
 
   function menuClick() {
     console.log("drawer", drawer);
     dispatch(drawerOpen());
   }
 
-  function chatClick() {
+  async function chatClick() {
     console.log("chat");
     //navigate to add page
+    try {
+      // console.log("Chats useEffect", user);
+      await axiosConfig
+        .get(`/users/${user.id}/chats`)
+        // .get(`/users/${user.id}/chats?owner="True"`)
+        .then((res) => {
+          // console.log("res", res.data.items);
+          dispatch(resetChannels());
+
+          res.data.items.forEach((channel) => {
+            dispatch(addChannel(channel));
+          });
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    } catch (error) {
+      console.log("error", error.response.data);
+    }
+
     navigation.navigate("ChatPage");
   }
 

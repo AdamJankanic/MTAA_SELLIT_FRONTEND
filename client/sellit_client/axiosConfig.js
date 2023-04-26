@@ -23,7 +23,8 @@ instance.interceptors.request.use((config) => {
   config.headers["X-ApiKey"] = apiKey;
   config.headers[
     "Authorization"
-  ] = `Bearer e73deaa0-e745-47b7-a88f-1e3df031fe8f`;
+  ] = `Bearer df155663-d328-41a3-aca1-5b9b3c69c1f5`;
+  // `Bearer e73deaa0-e745-47b7-a88f-1e3df031fe8f`;
   return config;
 });
 
