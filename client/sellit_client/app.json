@@ -25,7 +25,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sellit"
+      "package": "com.sellit",
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       [
@@ -41,6 +42,9 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
+      ],
+      [
+        "@react-native-firebase/app"
       ]
     ],
     "web": {
