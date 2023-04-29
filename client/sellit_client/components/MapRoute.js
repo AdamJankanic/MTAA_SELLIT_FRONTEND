@@ -80,8 +80,8 @@ export function MapRoute({ route }) {
             longitude: origin.longitude,
           }}
           destination={{
-            latitude: destination.latitude + 0.05,
-            longitude: destination.longitude + 0.05,
+            latitude: destination.latitude + 0.01,
+            longitude: destination.longitude + 0.01,
           }}
           apikey={GOOGLE_MAPS_APIKEY}
           strokeWidth={5}

@@ -3,7 +3,7 @@ import { Card, IconButton } from "react-native-paper";
 import * as React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addChannel, setActiveChannel } from "../reducers/MessagesReducer";
+import { addBuyChannel, setActiveChannel } from "../reducers/MessagesReducer";
 import { setActiveScreen } from "../reducers/ComponentsReducer";
 import { useNavigation } from "@react-navigation/native";
 
@@ -37,6 +37,8 @@ export function OfferDetail() {
     (state) => state.offerStore.activeOfferDetail
   );
 
+  const buyChannels = useSelector((state) => state.messagesStore.buyChannels);
+
   const user = useSelector((state) => state.componentsStore.user);
 
   const cities = useSelector((state) => state.offerStore.cities);
@@ -56,15 +58,24 @@ export function OfferDetail() {
       await axiosConfig
         .post(`/offers/${activeOfferDetail.id}/chat`)
         .then((res) => {
-          // console.log("res", res.data.response);
-          dispatch(addChannel(res.data.response));
+          console.log("res activeofferdetail", res.data.response);
 
+          if (
+            buyChannels.find((channel) => channel.id !== res.data.response.id)
+          ) {
+            dispatch(addBuyChannel(res.data.response));
+          }
+
+          console.log("1");
           dispatch(setActiveChannel(res.data.response.id));
+          console.log("2");
           dispatch(setActiveScreen("ChatDetail"));
+          console.log("3");
+
           navigation.navigate("ChatDetailPage");
         });
     } catch (error) {
-      console.log("error offer detail", error.response.data);
+      console.log("error offer detail", error);
     }
   }
 
@@ -182,18 +193,6 @@ export function OfferDetail() {
         }}
         disabled={activeOfferDetail.user.id === user?.id || !token}
       >
-        {/* <Text
-          style={{
-            fontSize: 15,
-            lineHeight: 20,
-            fontWeight: "bold",
-            letterSpacing: 0.25,
-            color: "white",
-          }}
-        >
-          Contact Seller
-        </Text> */}
-
         <Text
           style={{
             fontSize: 15,
@@ -210,6 +209,43 @@ export function OfferDetail() {
             : "Contact Seller"}
         </Text>
       </Pressable>
+
+      <View
+        style={{
+          alignItems: "center",
+          alignSelf: "center",
+          justifyContent: "space-between",
+          marginTop: 15,
+          backgroundColor: "white",
+          width: "50%",
+
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 7,
+          },
+          shadowOpacity: 0.43,
+          shadowRadius: 9.51,
+          elevation: 5,
+
+          borderRadius: 20,
+
+          // borderWidth: 5,
+        }}
+      >
+        <Image
+          source={{ uri: activeOfferDetail.user.image_url }}
+          style={{ width: 100, height: 100, borderRadius: 50 }}
+        />
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 16,
+          }}
+        >
+          {activeOfferDetail.user.username}
+        </Text>
+      </View>
     </View>
   );
 }

@@ -6,6 +6,7 @@ import { addOffer, resetOffers } from "../reducers/OfferReducer";
 import { setUser } from "../reducers/ComponentsReducer";
 
 import axiosConfig from "../axiosConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useEffect } from "react";
 
@@ -18,6 +19,14 @@ export function HomePage() {
     (state) => state.componentsStore.activeScreen
   );
 
+  async function setOffersToAsyncStorage(offers) {
+    try {
+      // console.log("offers do async storage", offers);
+      await AsyncStorage.setItem("offers", JSON.stringify(offers));
+    } catch (error) {
+      console.log("error set offers", error);
+    }
+  }
   // fetch offers from server
   async function fetchOffers() {
     // try fetch offers from server
@@ -34,6 +43,8 @@ export function HomePage() {
             // console.log("offer", offer);
             dispatch(addOffer(offer));
           });
+
+          setOffersToAsyncStorage(response.data.items);
         })
         .catch((error) => {
           console.log("error home page inside fetchoffers", error); // TypeError: failed to fetch
@@ -48,17 +59,41 @@ export function HomePage() {
       .get(`/users/me`)
       .then((res) => {
         // console.log("res", res.data.response);
-        console.log("user me switched", res.data.response);
+        // console.log("user me switched", res.data.response);
         dispatch(setUser(res.data.response));
+
+        // save user to async storage
+        try {
+          AsyncStorage.setItem("user", JSON.stringify(res.data.response));
+        } catch (error) {
+          console.log("error set user", error);
+        }
       })
       .catch((error) => {
         console.log("error get me", error);
       });
   }
 
+  async function sendExpToken() {
+    await AsyncStorage.getItem("expoPushToken").then((token) => {
+      // console.log("token expo send push ", token);
+      axiosConfig
+        .post("/expotoken", {
+          expotoken: token,
+        })
+        .then((res) => {
+          console.log("res send exp token", res.data);
+        })
+        .catch((error) => {
+          console.log("error send exp token", error);
+        });
+    });
+  }
+
   useEffect(() => {
     fetchOffers();
     getMe();
+    sendExpToken();
   }, [activeScreen]);
 
   return (

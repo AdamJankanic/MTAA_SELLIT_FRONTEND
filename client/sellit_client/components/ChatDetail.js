@@ -108,10 +108,10 @@ export function ChatDetail() {
     return () => {
       // Remove the event listeners when the component is unmounted
       console.log("unmounting socket");
-      socket.removeEventListener("open");
-      socket.removeEventListener("message");
-      socket.removeEventListener("close");
-      socket.removeEventListener("error");
+      // socket.removeEventListener("open");
+      // socket.removeEventListener("message");
+      // socket.removeEventListener("close");
+      // socket.removeEventListener("error");
     };
   }, [activeChannelId]);
 
