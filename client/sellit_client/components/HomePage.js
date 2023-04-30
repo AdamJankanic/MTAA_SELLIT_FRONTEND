@@ -1,23 +1,56 @@
 import { View, ScrollView } from "react-native";
 import { Offer } from "./Offer";
-
+import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addOffer, resetOffers } from "../reducers/OfferReducer";
-import { setUser } from "../reducers/ComponentsReducer";
+import { setUser, setConnection } from "../reducers/ComponentsReducer";
 
 import axiosConfig from "../axiosConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import NetInfo from "@react-native-community/netinfo";
 import { useEffect } from "react";
 
 export function HomePage() {
+  const [connection, setConnection] = React.useState(null);
+
   const dispatch = useDispatch();
-  // console.log("som tu HOMEPAGE");
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
+
   const offers = useSelector((state) => state.offerStore.offers);
 
   const activeScreen = useSelector(
     (state) => state.componentsStore.activeScreen
   );
+
+  async function getOffersAsyncStorage() {
+    try {
+      const offers = await AsyncStorage.getItem("offers").then((res) => {
+        // console.log("offers from async storage", JSON.parse(res));
+        dispatch(resetOffers());
+        JSON.parse(res).forEach((offer) => {
+          dispatch(addOffer(offer));
+        });
+      });
+    } catch (error) {
+      console.log("error get offers", error);
+    }
+  }
+
+  async function getMeAsyncStorage() {
+    try {
+      const user = await AsyncStorage.getItem("user").then((res) => {
+        // console.log("user from async storage", JSON.parse(res));
+        dispatch(setUser(JSON.parse(res)));
+      });
+    } catch (error) {
+      console.log("error get user", error);
+    }
+  }
 
   async function setOffersToAsyncStorage(offers) {
     try {
@@ -82,7 +115,10 @@ export function HomePage() {
           expotoken: token,
         })
         .then((res) => {
-          console.log("res send exp token", res.data);
+          console.log(
+            "res send exp token"
+            // res.data
+          );
         })
         .catch((error) => {
           console.log("error send exp token", error);
@@ -91,9 +127,14 @@ export function HomePage() {
   }
 
   useEffect(() => {
-    fetchOffers();
-    getMe();
-    sendExpToken();
+    if (connection) {
+      fetchOffers();
+      getMe();
+      sendExpToken();
+    } else {
+      getOffersAsyncStorage();
+      getMeAsyncStorage();
+    }
   }, [activeScreen]);
 
   return (

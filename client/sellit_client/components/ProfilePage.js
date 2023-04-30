@@ -1,5 +1,13 @@
 import * as React from "react";
-import { View, Text, Button, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  Image,
+  ScrollView,
+  Pressable,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -8,9 +16,18 @@ import { setActiveScreen } from "../reducers/ComponentsReducer";
 import { OfferEdit } from "./OfferEdit";
 
 import axiosConfig from "../axiosConfig";
-
+import NetInfo from "@react-native-community/netinfo";
 export function ProfilePage() {
   const dispatch = useDispatch();
+
+  const [connection, setConnection] = React.useState(false);
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
+
   const navigation = useNavigation();
 
   const [myOffers, setMyOffers] = React.useState(null);
@@ -22,6 +39,14 @@ export function ProfilePage() {
   React.useEffect(() => {
     // console.log("som tu profile page");
 
+    if (!connection) {
+      AsyncStorage.getItem("myOffers").then((res) => {
+        setMyOffers(JSON.parse(res));
+      });
+
+      return;
+    }
+
     async function getMyOffer() {
       try {
         // const offers = await AsyncStorage.getItem("offers").then((res) => {
@@ -31,6 +56,8 @@ export function ProfilePage() {
         axiosConfig.get(`/offers?user_id=${user.id}`).then((res) => {
           // console.log("res get my offers", res.data.items);
           setMyOffers(res.data.items);
+
+          AsyncStorage.setItem("myOffers", JSON.stringify(res.data.items));
         });
       } catch (error) {
         console.log("error get my offers", error);
@@ -42,7 +69,10 @@ export function ProfilePage() {
 
   console.log("my offers", myOffers);
   async function logout() {
-    console.log("logout");
+    if (!connection) {
+      Alert.alert("You are offline, you can't logout");
+      return;
+    }
 
     try {
       await axiosConfig.delete("/logout").then((res) => {
@@ -75,10 +105,65 @@ export function ProfilePage() {
 
       <Text>{user.username}</Text>
 
-      <Text>ProfilePage</Text>
+      {/* <Button title="Logout" onPress={logout}></Button> */}
 
-      <Button title="Logout" onPress={logout}></Button>
+      <View
+        style={{
+          flexDirection: "row",
 
+          width: "80%",
+          justifyContent: "space-around",
+        }}
+      >
+        <Pressable
+          style={{
+            backgroundColor: "black",
+            padding: 10,
+            margin: 10,
+            borderRadius: 10,
+            width: "35%",
+          }}
+          onPress={() => {
+            if (!connection) {
+              Alert.alert("You are offline, you can't edit profile");
+              return;
+            }
+            navigation.navigate("ProfileEditPage");
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: 20,
+            }}
+          >
+            Edit
+          </Text>
+        </Pressable>
+        <Pressable
+          style={{
+            backgroundColor: "black",
+            padding: 10,
+            margin: 10,
+            borderRadius: 10,
+            width: "35%",
+          }}
+          onPress={logout}
+        >
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: 20,
+            }}
+          >
+            Logout
+          </Text>
+        </Pressable>
+      </View>
       <ScrollView
         style={{
           paddingTop: 20,

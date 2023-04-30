@@ -17,8 +17,6 @@ import expo.modules.ReactNativeHostWrapper;
 
 import java.util.List;
 
-import expo.modules.camera.CameraPackage;
-
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

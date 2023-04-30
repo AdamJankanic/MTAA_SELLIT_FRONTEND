@@ -82,6 +82,8 @@ const offersSlice = createSlice({
     activeOfferDetail: null,
     activeEditOffer: null,
     activeEditOfferDetail: null,
+
+    sellerProfile: null,
   },
   reducers: {
     addOffer: (state, action) => {
@@ -110,6 +112,10 @@ const offersSlice = createSlice({
     resetActiveOfferDetail: (state, action) => {
       state.activeOfferDetail = null;
     },
+
+    setSellerProfile: (state, action) => {
+      state.sellerProfile = action.payload;
+    },
   },
 });
 
@@ -122,5 +128,6 @@ export const {
   resetOffers,
   setEditOffer,
   setEditOfferDetail,
+  setSellerProfile,
 } = offersSlice.actions;
 export default offersSlice.reducer;

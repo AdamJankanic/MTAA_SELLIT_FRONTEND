@@ -28,6 +28,7 @@ import { LoginPage } from "./components/LoginPage.js";
 import { RegisterPage } from "./components/RegisterPage.js";
 import { ProfilePage } from "./components/ProfilePage.js";
 import { OfferEditForm } from "./components/OfferEditForm.js";
+import { ProfileEdit } from "./components/ProfileEdit.js";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -40,6 +41,7 @@ const store = configureStore({
 //notifications
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import { SellerProfile } from "./components/SellerProfile.js";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -195,6 +197,16 @@ export default function App() {
             <Stack.Screen
               name="OfferEdit"
               component={OfferEditForm}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProfileEditPage"
+              component={ProfileEdit}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="SellerProfilePage"
+              component={SellerProfile}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

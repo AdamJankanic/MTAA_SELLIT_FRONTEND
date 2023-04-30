@@ -1,6 +1,6 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Card } from "react-native-paper";
-
+import * as React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,10 +10,18 @@ import {
 } from "../reducers/OfferReducer";
 
 import axiosConfig from "../axiosConfig";
-
+import NetInfo from "@react-native-community/netinfo";
 export function Offer(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const [connection, setConnection] = React.useState(false);
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
 
   // const activeOfferS = useSelector((state) => state.offerStore.activeOffer);
   // console.log("activeOfferSssssssssssssssssssssss", activeOfferS);
@@ -30,19 +38,21 @@ export function Offer(props) {
   });
 
   async function handleOfferClick() {
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
+
     //set active offer
-    dispatch(setActiveOffer(props.offer.id));
-    dispatch(resetActiveOfferDetail());
-    console.log("activeOffer", props.offer.id);
+    await axiosConfig.get(`/offers/${props.offer.id}`).then((res) => {
+      dispatch(setActiveOffer(props.offer.id));
+      // dispatch(resetActiveOfferDetail());
 
-    const res = await axiosConfig.get(`/offers/${props.offer.id}`);
-    console.log("res.data", res.data.response);
-    dispatch(setActiveOfferDetail(res.data.response));
+      dispatch(setActiveOfferDetail(res.data.response));
 
-    navigation.navigate("OfferDetailPage");
+      navigation.navigate("OfferDetailPage");
+    });
   }
-
-  // console.log("props.offer.images", props.offer.images[0]);
 
   return (
     <TouchableOpacity onPress={handleOfferClick}>

@@ -1,17 +1,41 @@
-import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Pressable,
+  Alert,
+} from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import * as React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addBuyChannel, setActiveChannel } from "../reducers/MessagesReducer";
+import {
+  addBuyChannel,
+  setActiveChannel,
+  setActiveChannelDetail,
+} from "../reducers/MessagesReducer";
+
+import { setSellerProfile } from "../reducers/OfferReducer";
+
 import { setActiveScreen } from "../reducers/ComponentsReducer";
+
 import { useNavigation } from "@react-navigation/native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosConfig from "../axiosConfig";
-
+import NetInfo from "@react-native-community/netinfo";
 export function OfferDetail() {
   const dispatch = useDispatch();
+
+  const [connection, setConnection] = React.useState(false);
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
+
   const navigation = useNavigation();
   const [token, setStoredData] = React.useState(null);
 
@@ -52,6 +76,11 @@ export function OfferDetail() {
   });
 
   async function contactSeller() {
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
+
     console.log("contactSeller");
     console.log("activeOfferDetail", activeOfferDetail.id);
     try {
@@ -68,6 +97,7 @@ export function OfferDetail() {
 
           console.log("1");
           dispatch(setActiveChannel(res.data.response.id));
+          dispatch(setActiveChannelDetail(res.data.response));
           console.log("2");
           dispatch(setActiveScreen("ChatDetail"));
           console.log("3");
@@ -79,7 +109,25 @@ export function OfferDetail() {
     }
   }
 
-  console.log("activeOfferDetail", activeOfferDetail);
+  // console.log("activeOfferDetail", activeOfferDetail);
+
+  function showSellerProfile() {
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
+
+    if (!token) {
+      Alert.alert("You need to be logged in to see seller profile");
+      return;
+    }
+
+    console.log("showSellerProfile", activeOfferDetail.user);
+    dispatch(setSellerProfile(activeOfferDetail.user));
+    dispatch(setActiveScreen("SellerProfile"));
+    navigation.navigate("SellerProfilePage");
+  }
+
   return (
     <View
       style={{
@@ -166,12 +214,7 @@ export function OfferDetail() {
           justifyContent: "center",
         }}
       >
-        <Text>
-          {/* Description of the offer goes here and it can be very long. Lorem
-          ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl
-          eget ultricies lacinia, nunc nisl aliquet nunc, eget aliquet nunc */}
-          {activeOfferDetail.description}
-        </Text>
+        <Text>{activeOfferDetail.description}</Text>
       </View>
 
       <Pressable
@@ -210,42 +253,44 @@ export function OfferDetail() {
         </Text>
       </Pressable>
 
-      <View
-        style={{
-          alignItems: "center",
-          alignSelf: "center",
-          justifyContent: "space-between",
-          marginTop: 15,
-          backgroundColor: "white",
-          width: "50%",
-
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 7,
-          },
-          shadowOpacity: 0.43,
-          shadowRadius: 9.51,
-          elevation: 5,
-
-          borderRadius: 20,
-
-          // borderWidth: 5,
-        }}
-      >
-        <Image
-          source={{ uri: activeOfferDetail.user.image_url }}
-          style={{ width: 100, height: 100, borderRadius: 50 }}
-        />
-        <Text
+      <Pressable onPress={showSellerProfile}>
+        <View
           style={{
-            fontWeight: "bold",
-            fontSize: 16,
+            alignItems: "center",
+            alignSelf: "center",
+            justifyContent: "space-between",
+            marginTop: 15,
+            backgroundColor: "white",
+            width: "50%",
+
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 7,
+            },
+            shadowOpacity: 0.43,
+            shadowRadius: 9.51,
+            elevation: 5,
+
+            borderRadius: 20,
+
+            // borderWidth: 5,
           }}
         >
-          {activeOfferDetail.user.username}
-        </Text>
-      </View>
+          <Image
+            source={{ uri: activeOfferDetail.user.image_url }}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            {activeOfferDetail.user.username}
+          </Text>
+        </View>
+      </Pressable>
     </View>
   );
 }

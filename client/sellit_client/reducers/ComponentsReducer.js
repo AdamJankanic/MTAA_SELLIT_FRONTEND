@@ -8,6 +8,7 @@ const componentsSlice = createSlice({
     image: null,
     user: null,
     websocketUUID: [],
+    connection: null,
   },
   reducers: {
     drawerOpen: (state, action) => {
@@ -37,6 +38,10 @@ const componentsSlice = createSlice({
     addWebSocketUUID: (state, action) => {
       state.websocketUUID.push(action.payload);
     },
+
+    setConnection: (state, action) => {
+      state.connection = action.payload;
+    },
   },
 });
 
@@ -48,5 +53,6 @@ export const {
   setImageNull,
   setUser,
   addWebSocketUUID,
+  setConnection,
 } = componentsSlice.actions;
 export default componentsSlice.reducer;

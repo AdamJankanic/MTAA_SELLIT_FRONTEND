@@ -1,6 +1,6 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Card } from "react-native-paper";
-
+import * as React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,10 +12,17 @@ import {
 import { setActiveScreen } from "../reducers/ComponentsReducer";
 
 import axiosConfig from "../axiosConfig";
-
+import NetInfo from "@react-native-community/netinfo";
 export function OfferEdit(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [connection, setConnection] = React.useState(false);
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
 
   // const activeOfferS = useSelector((state) => state.offerStore.activeOffer);
   // console.log("activeOfferSssssssssssssssssssssss", activeOfferS);
@@ -32,6 +39,11 @@ export function OfferEdit(props) {
   });
 
   async function handleOfferClick() {
+    //check connection
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
     //set active offer
     dispatch(setEditOffer(props.offer.id));
     dispatch(resetActiveOfferDetail());

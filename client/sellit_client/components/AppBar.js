@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Appbar, Drawer } from "react-native-paper";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 import { drawerOpen, setActiveScreen } from "../reducers/ComponentsReducer";
@@ -13,8 +13,16 @@ import {
 } from "../reducers/MessagesReducer";
 import axiosConfig from "../axiosConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import NetInfo from "@react-native-community/netinfo";
 export function AppBar() {
+  const [connection, setConnection] = React.useState(false);
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
+
   const [token, setStoredData] = React.useState(null);
   const activeScreen = useSelector(
     (state) => state.componentsStore.activeScreen
@@ -46,6 +54,11 @@ export function AppBar() {
   }
 
   async function chatClick() {
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
+
     if (!token) {
       dispatch(setActiveScreen("LoginPage"));
       navigation.navigate("LoginPage");

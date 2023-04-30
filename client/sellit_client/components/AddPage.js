@@ -17,8 +17,20 @@ import {
   // postNewOffer
 } from "../reducers/OfferReducer";
 
+import { useNavigation } from "@react-navigation/native";
+import NetInfo from "@react-native-community/netinfo";
 export function AddPage() {
+  const navigation = useNavigation();
+  const [connection, setConnection] = React.useState(null);
+
   const dispatch = useDispatch();
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    setConnection(state.isConnected);
+  });
+
   const [title, setTitle] = React.useState("");
 
   const [price, setPrice] = React.useState("");
@@ -49,6 +61,11 @@ export function AddPage() {
   const imageBase64 = useSelector((state) => state.componentsStore.image);
 
   async function handleSubmit() {
+    if (!connection) {
+      Alert.alert("No internet connection");
+      return;
+    }
+
     if (
       !title ||
       !description ||
@@ -74,9 +91,8 @@ export function AddPage() {
       console.log(response.data);
     } catch (error) {
       console.log(error);
-
-      navigation.navigate("HomePage");
     }
+    navigation.navigate("HomePage");
   }
 
   // console.log(useSelector((state) => state.offerStore.newOffer.images));

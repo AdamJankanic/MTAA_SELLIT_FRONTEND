@@ -226,13 +226,6 @@ export function ChatDetail() {
 
   //convert string to number
 
-  // console.log("messages", messages);
-  // messages.map((message) => {
-  //   console.log("message", message.user.id);
-  // });
-
-  // console.log("user store", user.id);
-
   return (
     <View
       style={{
@@ -257,13 +250,13 @@ export function ChatDetail() {
               key={index}
               style={
                 (message.user?.id ? message.user?.id : message.user_id) ===
-                user.id
+                user?.id
                   ? styles.sended
                   : styles.received
               }
             >
               {message.location &&
-              user.id !== activeChannelDetail.offer.user.id ? (
+              user?.id !== activeChannelDetail.offer?.user?.id ? (
                 <Pressable
                   onPress={() => navigationMessage(message)}
                   style={{
@@ -298,11 +291,11 @@ export function ChatDetail() {
           icon="map-marker"
           style={{
             width: "10%",
-            // height: 50,
-            // console.log("user", user);
-            // console.log("activeChannelDetail", activeChannelDetail.offer.user);
+
             display:
-              user.id === activeChannelDetail.offer.user.id ? "flex" : "none",
+              user?.id === activeChannelDetail.offer?.user?.id
+                ? "flex"
+                : "none",
           }}
           onPress={sendLocation}
         />
@@ -316,7 +309,7 @@ export function ChatDetail() {
             justifyContent: "flex-end",
             backgroundColor: "white",
             width:
-              user.id === activeChannelDetail.offer.user.id ? "85%" : "100%",
+              user?.id === activeChannelDetail.offer?.user?.id ? "85%" : "100%",
           }}
         />
       </View>
