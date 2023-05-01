@@ -35,6 +35,7 @@ import { ProfileEdit } from "./components/ProfileEdit.js";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 const Stack = createStackNavigator();
 
 const store = configureStore({
