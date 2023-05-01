@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 
-const GOOGLE_MAPS_APIKEY = "";
+const GOOGLE_MAPS_APIKEY = "AIzaSyC03EQjaitDtft_wG5LBfGvYr6p8L2AEto";
 
 export function MapRoute({ route }) {
   console.log("MapRoute");
