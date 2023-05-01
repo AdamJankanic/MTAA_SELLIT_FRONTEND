@@ -53,11 +53,13 @@ export function OfferEditForm() {
       return;
     }
 
+    console.log("update offer", title, description, price, city, category);
+
     try {
       const response = await axiosConfig.put(`/offers/${offerEditDetail.id}`, {
         title: title,
         description: description,
-        price: price,
+        price: Number(price),
         city_id: city,
         category_id: category,
         // images: [{ image: imageBase64 }],
@@ -99,7 +101,7 @@ export function OfferEditForm() {
 
         <TextInput
           label="Price"
-          inputMode="numeric"
+          // inputMode="numeric"
           pattern="[0-9]*"
           keyboardType={"numeric"}
           mode="outlined"

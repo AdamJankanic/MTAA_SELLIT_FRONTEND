@@ -1,3 +1,6 @@
+// source: https://docs.expo.dev/push-notifications/push-notifications-setup/
+// minimal working setup for push notifications from expo docs
+
 import "react-native-gesture-handler";
 import * as React from "react";
 import { Button, Provider as PaperProvider } from "react-native-paper";
